@@ -67,6 +67,10 @@ class ReusableForm(Form):
     def showAbout():
         return render_template("about.html")
 
+    @app.route("/confirm")
+    def confirmation():
+        return render_template("confirm.html")
+
 
 if __name__ == "__main__":
     app.run()
