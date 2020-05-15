@@ -1,4 +1,4 @@
-import os, sqlite3, datetime
+import os, sqlite3, datetime, functools, operator
 
 class resource(object):
     resourceQuantity = int
@@ -194,8 +194,22 @@ class User(Booking):
     userID = int
     __username = str
     __password = str
+    __email = str
     userisAdmin = bool
     accountIsActive = bool
+
+    def createUser(self, userID, username, password, email, userisAdmin, accountIsActive):
+        """
+        Example: createUser(1564, "jesp9025", "1234", jesp9025@live.dk, True, True)
+        """
+        try:            
+            c = self.conn.cursor()
+            c.execute("INSERT INTO User (user_id, user_username, user_password, user_email, user_is_admin, user_account_is_active) VALUES ({}, '{}', '{}', '{}', '{}', '{}')".format(userID, username, password, email, userisAdmin, accountIsActive))
+            self.conn.commit()
+            c.close()
+            return "Succesfully created new user"
+        except sqlite3.Error as e:
+            return "An error occurred:", e.args[0]
 
     def verifyUsername(self):
         return True
@@ -203,8 +217,20 @@ class User(Booking):
     def verifyUserActiveStatus(self):
         return True
     
-    def verifyPassword(self):
-        return True
+    # Fuck my life. convert from tuple to list, from list to str to check password
+    def verifyPassword(self, username, password):
+        c = self.conn.cursor()            
+        c.execute("SELECT user_password FROM User WHERE user_username = '{}'".format(username))
+        got = c.fetchall()
+        toList = functools.reduce(operator.add, (got))
+        toString = ""
+        for i in toList:
+            toString += str(i)
+        if toString == password:
+            c.close
+            return True
+        else:
+            print("Wrong username and password combination")
 
     def checkIfAdmin(self):
         return True

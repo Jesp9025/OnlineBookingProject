@@ -6,6 +6,7 @@ import os
 
 # Test if we can read from database
 res = Project.resource()
+user = Project.User()
 #lst = res.readResource('Resource')
 #for row in lst:
 #    print(row)
@@ -26,7 +27,7 @@ class Test(db.Model):
 
 class ReusableForm(Form):
     name = TextField('Name:', validators=[validators.required()])
-    email = TextField('Email:', validators=[validators.required(), validators.Length(min=6, max=35)])
+    #email = TextField('Email:', validators=[validators.required(), validators.Length(min=6, max=35)])
     password = TextField('Password:', validators=[validators.required(), validators.Length(min=3, max=35)])
 
     @app.route("/", methods=['GET', 'POST'])
@@ -37,13 +38,15 @@ class ReusableForm(Form):
         if request.method == 'POST':
             name=request.form['name']
             password=request.form['password']
-            email=request.form['email']
-            print(name, " ", email, " ", password)
+            #email=request.form['email']
+            print(name, " ", password)
 
         if form.validate():
-        # Save the comment here.
-            print(res.createResource(2, name, "DX850", "d231213sddsa")) # For  testing purposes
-            flash('Thanks for registration ' + name)
+            if user.verifyPassword(name, password):
+                flash('Success! ' + name)
+                return render_template('welcome.html')
+            else:
+                flash('Error: Wrong username or password')
         else:
             flash('Error: All the form fields are required. ')
 
