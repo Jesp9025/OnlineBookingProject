@@ -51,13 +51,22 @@ class ReusableForm(Form):
             flash('Error: All the form fields are required. ')
 
         return render_template('index.html', form=form)
-    @app.route("/about")
+    @app.route("/resources")
     def getTable():
         '''This will print out a table
         '''
         lst = res.readResource("Resource")
         data = lst
-        return render_template("about.html", data=data)
+        return render_template("resources.html", data=data)
+
+    @app.route("/reservation")
+    def showBooking():
+        return render_template("reservation.html")
+
+    @app.route("/about")
+    def showAbout():
+        return render_template("about.html")
+
 
 if __name__ == "__main__":
     app.run()
