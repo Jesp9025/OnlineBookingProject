@@ -219,18 +219,21 @@ class User(Booking):
     
     # Fuck my life. convert from tuple to list, from list to str to check password
     def verifyPassword(self, username, password):
-        c = self.conn.cursor()            
-        c.execute("SELECT user_password FROM User WHERE user_username = '{}'".format(username))
-        got = c.fetchall()
-        toList = functools.reduce(operator.add, (got))
-        toString = ""
-        for i in toList:
-            toString += str(i)
-        if toString == password:
-            c.close
-            return True
-        else:
-            print("Wrong username and password combination")
+        try:
+            c = self.conn.cursor()            
+            c.execute("SELECT user_password FROM User WHERE user_username = '{}'".format(username))
+            got = c.fetchall()
+            toList = functools.reduce(operator.add, (got))
+            toString = ""
+            for i in toList:
+                toString += str(i)
+            if toString == password:
+                c.close
+                return True
+            else:
+                print("Wrong username and password combination")
+        except TypeError:
+            print("Something went wrong")
 
     def checkIfAdmin(self):
         return True
