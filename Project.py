@@ -1,6 +1,6 @@
 import os, sqlite3, datetime, functools, operator
 
-class resource(object):
+class Resource(object):
     resourceQuantity = int
     resourceManufactorer = str
     resourceModel = str
@@ -72,7 +72,7 @@ class resource(object):
             return "An error occurred:", e.args[0]
 
 
-class Lab(resource):
+class Lab(Resource):
     labName = str
     labDescription = str
     labResouceID = int

@@ -1,14 +1,19 @@
-<!doctype html>
-
-
-<head><title>Welcome</title> 
-    <meta charset=utf-8> </head>
-    <body>
-        <h1>Welcome to this welcome page</h1>
-        <form action="/resources">
-            <input type="submit" value="View available resources" />
-        </form>
-        <form action="/reservation">
-            <input type="submit" value="Make Reservation" />
-         </form>
-    </body>
+<title>Frontpage</title>
+        	 	<link rel="stylesheet" media="screen" href="static/bootstrap.min.css">
+        	 	<link rel="stylesheet" href="static/bootstrap-theme.min.css">
+       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<div class="btn-group">
+   <form action="/logout">
+      <input type="submit" value="Logout" />
+   </form>
+   <form action="/welcome">
+      <input type="submit" value="Front Page" />
+   </form>
+   <form action="/resources">
+      <input type="submit" value="Resources" />
+   </form>
+   <form action="/reservation">
+      <input type="submit" value="Make Reservation" />
+   </form>
+</div>
+<h1>Welcome to this welcome page</h1>

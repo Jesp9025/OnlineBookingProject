@@ -2,6 +2,20 @@
         	<link rel="stylesheet" media="screen" href="static/bootstrap.min.css">
         	<link rel="stylesheet" href="static/bootstrap-theme.min.css">
        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<div class="btn-group">
+   <form action="/logout">
+      <input type="submit" value="Logout" />
+   </form>
+   <form action="/welcome">
+      <input type="submit" value="Front Page" />
+   </form>
+   <form action="/resources">
+      <input type="submit" value="Resources" />
+   </form>
+   <form action="/reservation">
+      <input type="submit" value="Make Reservation" />
+   </form>
+</div>
 <div class="container">
 <h2>Reservation</h2>
 <form action="" method="post" role="form">
@@ -15,5 +29,5 @@
     </div>
 </form>
 <form action="/confirm">
-    <input type="submit" value="Confirm" />
- </form>
+            <input type="submit" value="Confirm" />
+         </form>
