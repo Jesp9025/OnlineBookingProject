@@ -52,17 +52,17 @@ def resources():
     return render_template("resources.html", data=data)
 
 @app.route("/reservation")
-def showBooking():
+def reservation():
     if "name" not in session:
         return redirect(url_for("login"))
     return render_template("reservation.html")
 
 @app.route("/about")
-def showAbout():
+def about():
     return render_template("about.html")
 
 @app.route("/confirm")
-def confirmation():
+def confirm():
     if "name" not in session:
         return redirect(url_for("login"))
     return render_template("confirm.html")
