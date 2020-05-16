@@ -30,36 +30,23 @@ class Resource(object):
             return "An error occurred:", e.args[0]
         
 
-    def readResource(self, param):
-        """Example:\n
-        res = resource()\n
-        lst = res.readResource('Resource')\n
-        for row in lst:\n
-            print(row)
+    def readResource(self):
+        """Reads everything in Resource table
         """
         c = self.conn.cursor()
-        c.execute("select * from {}".format(param))
+        c.execute("select * from Resource")
         lst = c.fetchall()
         c.close()
         return lst
 
-    def readSpecific(self, param):
-        '''This can read from anything.
-            Insert the query and you are gucci
-        '''
-        c = self.conn.cursor()
-        c.execute(param)
-        lst = c.fetchall()
-        c.close()
-        return lst
 
-    def updateResource(self, table, column_name, new_value, where_to_find, name): # Not sure about the names yet
+    def updateResource(self, column_name, new_value, where_column, value): # Not sure about the names yet
         """
-        Example: updateResource("Resource", "resource_Quantity", "30", "resource_Model", "3570")
+        Example: updateResource("resource_Quantity", "30", "resource_Model", "3570")
         """
         try:
             c = self.conn.cursor()
-            c.execute("UPDATE {} SET {} = {} WHERE {} = '{}'".format(table, column_name, new_value, where_to_find, name))
+            c.execute("UPDATE Resource SET {} = {} WHERE {} = '{}'".format(column_name, new_value, where_column, value))
             self.conn.commit()
             c.close()
             return True
@@ -67,13 +54,13 @@ class Resource(object):
             return "An error occurred:", e.args[0]
 
 
-    def deleteResource(self, table, instance, name): # Not sure about the names yet
+    def deleteResource(self, column_name, value): # Not sure about the names yet
         """
-        Example: deleteResource("Resource", "resource_model", "3rd model")
+        Example: deleteResource("resource_model", "DX850")
         """
         try:
             c = self.conn.cursor()
-            c.execute("DELETE from {} WHERE {} = '{}'".format(table, instance, name))
+            c.execute("DELETE FROM Resource WHERE {} = '{}'".format(column_name, value))
             self.conn.commit()
             c.close()
             return True
@@ -99,39 +86,35 @@ class Lab(Resource):
         except sqlite3.Error as e:
             return "An error occurred:", e.args[0]
     
-    def readLab(self, param):
-        """Example:\n
-        lab = Lab()\n
-        lst = res.readLab('Lab')\n
-        for row in lst:\n
-            print(row)
+    def readLab(self):
+        """Reads everything in Lab table
         """
         c = self.conn.cursor()
-        c.execute("select * from {}".format(param))
+        c.execute("select * from Lab")
         lst = c.fetchall()
         c.close()
         return lst
 
-    def updateLab(self, table, column_name, new_value, where_to_find, name): # Not sure about the names yet
+    def updateLab(self, table, column_name, new_value, where_column, value): # Not sure about the names yet
         """
-        Example: updateLab("Lab", "lab_description", "new description", "lab_name", "IoT")
+        Example: updateLab("lab_description", "new description", "lab_name", "IoT")
         """
         try:
             c = self.conn.cursor()
-            c.execute("UPDATE {} SET {} = {} WHERE {} = '{}'".format(table, column_name, new_value, where_to_find, name))
+            c.execute("UPDATE Lab SET {} = {} WHERE {} = '{}'".format(column_name, new_value, where_column, value))
             self.conn.commit()
             c.close()
             return True
         except sqlite3.Error as e:
             return "An error occurred:", e.args[0]
 
-    def deleteLab(self, table, instance, name): # Not sure about the names yet
+    def deleteLab(self, column_name, value): # Not sure about the names yet
         """
         Example: deleteLab("Lab", "lab_name", "IoT")
         """
         try:
             c = self.conn.cursor()
-            c.execute("DELETE from {} WHERE {} = '{}'".format(table, instance, name))
+            c.execute("DELETE FROM Lab WHERE {} = '{}'".format(column_name, value))
             self.conn.commit()
             c.close()
             return True
@@ -141,55 +124,71 @@ class Lab(Resource):
 class Booking(Lab):
     bookingID = int
     bookingStart = datetime
-    bookingEnd = datetime
     isBooked = bool
 
-    def createBooking(self, bookingID, bookingStart, bookingEnd):
-        """
-        Example: createBooking(21235, "start date?", "end date?")
-        """
-        try:            
-            c = self.conn.cursor()
-            c.execute("INSERT INTO Booking (booking_id, booking_start, booking_end) VALUES ({}, '{}', '{}')".format(bookingID, bookingStart, bookingEnd))
-            self.conn.commit()
-            c.close()
-            return True
-        except sqlite3.Error as e:
-            return "An error occurred:", e.args[0]
+    def createBooking(self, quantity, resourceID, bookingID):
+        c = self.conn.cursor()
+        c.execute("SELECT resource_quantity FROM Resource WHERE resource_id = {}".format(resourceID))
+        lst = c.fetchall()
+        #c.close()
+        toList = functools.reduce(operator.add, (lst))
+        for item in toList:
+            if quantity > item:
+                print("No can do..")
+                return True
+            elif quantity <= 0:
+                print("No can do again")
+                return True
+            else:
+                bookingStart = datetime.date.today()
+                newValue = item - quantity
+                Booking.updateResource(self, "resource_quantity", newValue, "resource_id", resourceID)
+                try:
+                    c.execute("INSERT INTO Booking (booking_id, booking_start) VALUES ({}, '{}')".format(bookingID, bookingStart))
+                    self.conn.commit()
+                    c.close()
+                except sqlite3.IntegrityError as e:
+                    print(e)
+                    return True
     
-    def readBooking(self, param):
-        """Example:\n
-        booking = Booking()\n
-        lst = booking.readBooking('Lab')\n
-        for row in lst:\n
-            print(row)
+    def readBooking(self):
+        """Reads everything in Booking table
         """
         c = self.conn.cursor()
-        c.execute("select * from {}".format(param))
+        c.execute("select * from Booking")
         lst = c.fetchall()
         c.close()
         return lst
 
-    def updateBooking(self, table, column_name, new_value, where_to_find, name): # Not sure about the names yet
+    def deleteOldBookings(self):
+        '''Delete bookings that exceed 1 day
+        '''
+        c = self.conn.cursor()
+        c.execute("DELETE FROM Booking WHERE booking_start < DATETIME('NOW', '-1 days');")
+        self.conn.commit()
+        c.close()
+        return True
+
+    def updateBooking(self, column_name, new_value, where_column, value): # Not sure about the names yet
         """
-        Example: updateBooking("Booking", "booking_end", "new end date?", "booking_id", "21235")
+        Example: updateBooking("booking_end", "2020-05-17", "booking_id", "21235")
         """
         try:
             c = self.conn.cursor()
-            c.execute("UPDATE {} SET {} = {} WHERE {} = '{}'".format(table, column_name, new_value, where_to_find, name))
+            c.execute("UPDATE Booking SET {} = {} WHERE {} = '{}'".format(column_name, new_value, where_column, value))
             self.conn.commit()
             c.close()
             return True
         except sqlite3.Error as e:
             return "An error occurred:", e.args[0]
 
-    def deleteBooking(self, table, instance, name): # Not sure about the names yet
+    def deleteBooking(self, column_name, value): # Not sure about the names yet
         """
         Example: deleteBooking("Booking", "booking_id", "21235")
         """
         try:
             c = self.conn.cursor()
-            c.execute("DELETE from {} WHERE {} = '{}'".format(table, instance, name))
+            c.execute("DELETE FROM Booking WHERE {} = '{}'".format(column_name, value))
             self.conn.commit()
             c.close()
             return True

@@ -12,12 +12,15 @@
    <form action="/resources">
       <input type="submit" value="Resources" />
    </form>
+   <form action="/bookings">
+      <input type="submit" value="Bookings" />
+   </form>
    <form action="/reservation">
       <input type="submit" value="Make Reservation" />
    </form>
 </div>
 <div class="container">
-<h2>Resources Available</h2>
+<h2>Resources</h2>
 <body>
   {%for value in data%}
      <p>{{value}}</p>

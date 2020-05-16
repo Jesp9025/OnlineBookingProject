@@ -8,6 +8,7 @@ import functools, operator # To convert tuple to list
 # To get methods from classes
 res = Project.Resource()
 user = Project.User()
+booking = Project.Booking()
 
 # App config.
 DEBUG = False
@@ -55,13 +56,21 @@ def registration():
 
 @app.route("/resources")
 def resources():
-    '''This will print out a table
-    '''
     if "name" not in session:
         return redirect(url_for("login"))
-    lst = res.readResource("Resource")
+    booking.deleteOldBookings()
+    lst = res.readResource()
     data = lst
     return render_template("resources.html", data=data)
+
+@app.route("/bookings")
+def bookings():
+    if "name" not in session:
+        return redirect(url_for("login"))
+    booking.deleteOldBookings()
+    lst = booking.readBooking()
+    data = lst
+    return render_template("bookings.html", data=data)
 
 @app.route("/reservation", methods=['GET', 'POST'])
 def reservation():
@@ -71,23 +80,15 @@ def reservation():
     if request.method == 'POST':
         resourceID=request.form['ID']
         quantity=request.form['quantity']
+        bookingID=request.form['bookingID']
+        
         try:
             quantity = int(quantity)
-        except TypeError as e:
+        except (TypeError, ValueError) as e:
             print(e)
-
-        temp = res.readSpecific("SELECT resource_quantity FROM Resource WHERE resource_id = {}".format(resourceID))
-        toList = functools.reduce(operator.add, (temp))
-        for item in toList:
-            if quantity > item:
-                print("No can do..")
-                return redirect(url_for("reservation"))
-            elif quantity <= 0:
-                print("No can do again")
-                return redirect(url_for("reservation"))
-            else:
-                newValue = item - quantity
-                res.updateResource("Resource", "resource_quantity", newValue, "resource_id", resourceID)
+        
+        if booking.createBooking(quantity, resourceID, bookingID): # If resources are not available
+            return redirect(url_for("reservation"))
         return redirect(url_for("confirm"))
 
     return render_template("reservation.html")

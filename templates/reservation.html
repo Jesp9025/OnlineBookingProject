@@ -12,16 +12,21 @@
    <form action="/resources">
       <input type="submit" value="Resources" />
    </form>
+   <form action="/bookings">
+      <input type="submit" value="Bookings" />
+   </form>
    <form action="/reservation">
       <input type="submit" value="Make Reservation" />
    </form>
 </div>
 <div class="container">
-   <h2>Registration</h2>
+   <h2>Reservation</h2>
    <form action="" method="post" role="form">
    <label for="ID">Resource ID:</label>
    <input type="text" class="form-control" id="ID" name="ID">
    <label for="quantity">Quantity:</label>
    <input type="text" class="form-control" id="quantity" name="quantity">
+   <label for="bookingID">Booking ID:</label>
+   <input type="text" class="form-control" id="bookingID" name="bookingID">
    <button type="submit" class="btn btn-success">Confirm Booking</button>
    </form>
