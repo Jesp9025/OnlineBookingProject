@@ -10,15 +10,17 @@
 
 <label for="password">Password:</label>
 <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-
 <button type="submit" class="btn btn-success">Log In</button>
 </form>
+<div class="btn-group"></div>
 <form action="/registration">
-      <input type="submit" value="Register" />
+      <input type="submit" value="Register" class="btn btn-success"/>
 </form>
 <form action="/about">
-      <input type="submit" value="About" />
+      <input type="submit" value="About" class="btn btn-success"/>
+</div>
 </form>
+</div>
 
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}

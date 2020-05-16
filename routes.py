@@ -44,7 +44,8 @@ def logout():
 @app.route("/registration", methods=['GET', 'POST'])
 def registration():
     if request.method == 'POST':
-        userID=request.form['ID']
+        #userID=request.form['ID']
+        userID = user.IDGenerator("user_id", "User")
         username=request.form['username']
         password=request.form['password']
         email=request.form['email']
@@ -80,7 +81,8 @@ def reservation():
     if request.method == 'POST':
         resourceID=request.form['ID']
         quantity=request.form['quantity']
-        bookingID=request.form['bookingID']
+        #bookingID=request.form['bookingID']
+        bookingID = user.IDGenerator("booking_id", "Booking")
         
         try:
             quantity = int(quantity)
@@ -108,7 +110,6 @@ def welcome():
     if "name" not in session:
         return redirect(url_for("login"))
     return render_template("welcome.html")
-
 
 if __name__ == "__main__":
     app.run()

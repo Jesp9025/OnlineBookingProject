@@ -1,4 +1,4 @@
-import os, sqlite3, datetime, functools, operator
+import os, sqlite3, datetime, functools, operator, random
 
 class Resource(object):
     resourceQuantity = int
@@ -243,6 +243,16 @@ class User(Booking):
 
     def checkIfAdmin(self):
         return True
+
+    def IDGenerator(self, column_name, table):
+        ID = random.randint(1, 99999)
+        c = self.conn.cursor()
+        c.execute("SELECT {} FROM {} WHERE {} = {}".format(column_name, table, ID, column_name))
+        lst = c.fetchall()
+        for item in lst:
+            if item == ID:
+                ID = random.randint(1, 99999)
+        return ID
 
 #res = resource()
 #lst = res.readResource('Resource')
