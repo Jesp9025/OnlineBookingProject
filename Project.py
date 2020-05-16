@@ -43,6 +43,15 @@ class Resource(object):
         c.close()
         return lst
 
+    def readSpecific(self, param):
+        '''This can read from anything.
+            Insert the query and you are gucci
+        '''
+        c = self.conn.cursor()
+        c.execute(param)
+        lst = c.fetchall()
+        c.close()
+        return lst
 
     def updateResource(self, table, column_name, new_value, where_to_find, name): # Not sure about the names yet
         """
@@ -211,14 +220,12 @@ class User(Booking):
         except sqlite3.Error as e:
             return "An error occurred:", e.args[0]
 
-    def verifyUsername(self):
-        return True
-    
+ 
     def verifyUserActiveStatus(self):
         return True
     
     # Fuck my life. convert from tuple to list, from list to str to check password
-    def verifyPassword(self, username, password):
+    def verifyLogin(self, username, password):
         try:
             c = self.conn.cursor()            
             c.execute("SELECT user_password FROM User WHERE user_username = '{}'".format(username))

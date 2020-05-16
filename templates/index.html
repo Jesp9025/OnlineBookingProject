@@ -12,9 +12,15 @@
 <input type="password" class="form-control" id="password" name="password" placeholder="Password">
 
 <button type="submit" class="btn btn-success">Log In</button>
-<button onclick="location.href='http://localhost:5000/about'" type="button">
-         About</button>
-</form>{% with messages = get_flashed_messages(with_categories=true) %}
+</form>
+<form action="/registration">
+      <input type="submit" value="Register" />
+</form>
+<form action="/about">
+      <input type="submit" value="About" />
+</form>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
 
 {% for message in messages %}
@@ -27,5 +33,4 @@
 {% endfor %}
 {% endif %}
 {% endwith %}
-
 </div>
