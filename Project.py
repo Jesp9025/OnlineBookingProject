@@ -206,6 +206,19 @@ class User(Booking):
     userisAdmin = bool
     accountIsActive = bool
 
+    # Maybe a bad way to do it?
+    def readUserEmail(self, username):
+        c = self.conn.cursor()
+        c.execute("SELECT user_email FROM User WHERE user_username = '{}'".format(username))
+        lst = c.fetchall()
+        print(lst)
+        email = ""
+        for i in lst:
+            email += str(i)
+        return email
+        
+
+
     def createUser(self, userID, username, password, email, userisAdmin, accountIsActive):
         """
         Example: createUser(1564, "jesp9025", "1234", jesp9025@live.dk, True, True)
@@ -253,17 +266,3 @@ class User(Booking):
             if item == ID:
                 ID = random.randint(1, 99999)
         return ID
-
-#res = resource()
-#lst = res.readResource('Resource')
-#for row in lst:
-#    print(row)
-
-lab = Lab()
-#print(lab.createLab(232213, "IoT", "Students learn to work with Arduino etc"))
-#print(lab.readLab("Lab"))
-
-
-#print(res.createResource(2, "Lenovo", "DX850", "d231213sddsa"))
-#print(res.updateResource("Resource", "resource_Quantity", "40", "resource_Model", "3570"))
-#print(res.deleteResource("Resource", "resource_model", "DX850"))

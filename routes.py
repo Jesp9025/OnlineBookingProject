@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 import Project
 import os
 import functools, operator # To convert tuple to list
+import EmailConfirm
 
 # To get methods from classes
 res = Project.Resource()
@@ -15,11 +16,11 @@ DEBUG = False
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.config['SECRET_KEY'] = '7d441f27d441f275asdasd6352567d441f2b6176a'
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////Users/Jesper/Desktop/New/databaseProject.db' # Define where database is located
-#db = SQLAlchemy(app) # Initialize SQLAlchemy
+
 
 @app.route("/", methods=['GET', 'POST'])
 def login():
+    global name
     if request.method == 'POST':
         name=request.form['name']
         password=request.form['password']
@@ -44,7 +45,6 @@ def logout():
 @app.route("/registration", methods=['GET', 'POST'])
 def registration():
     if request.method == 'POST':
-        #userID=request.form['ID']
         userID = user.IDGenerator("user_id", "User")
         username=request.form['username']
         password=request.form['password']
@@ -81,7 +81,6 @@ def reservation():
     if request.method == 'POST':
         resourceID=request.form['ID']
         quantity=request.form['quantity']
-        #bookingID=request.form['bookingID']
         bookingID = user.IDGenerator("booking_id", "Booking")
         
         try:
@@ -91,6 +90,7 @@ def reservation():
         
         if booking.createBooking(quantity, resourceID, bookingID): # If resources are not available
             return redirect(url_for("reservation"))
+        EmailConfirm.sendEmail(user.readUserEmail(name)) # Sends an email to users email address
         return redirect(url_for("confirm"))
 
     return render_template("reservation.html")
