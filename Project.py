@@ -161,13 +161,48 @@ class Booking(Lab):
         return lst
 
     def deleteOldBookings(self):
-        '''Delete bookings that exceed 1 day
+        '''Delete bookings that exceed 1 day and update resource quantity, in order words "return the equipment you reserved"
         '''
-        c = self.conn.cursor()
-        c.execute("DELETE FROM Booking WHERE booking_start < DATETIME('NOW', '-1 days');")
-        self.conn.commit()
-        c.close()
-        return True
+        try:
+            c = self.conn.cursor()
+            # Get resource quantity from Booking
+            c.execute("SELECT booking_resource_quantity FROM Booking WHERE booking_start < DATETIME('NOW', '-1 days');")
+            tupleQuantity = c.fetchall()
+            listQuantity = functools.reduce(operator.add, (tupleQuantity))
+            # Get resource ID from Booking
+            c.execute("SELECT booking_resource_id FROM Booking WHERE booking_start < DATETIME('NOW', '-1 days');")
+            tupleID = c.fetchall()
+            listID = functools.reduce(operator.add, (tupleID))
+            stringID = ""
+            stringQuantity = ""
+            # 1st for loop is to get first item in booking_resource_quantity
+            # 2nd for loop is to get first item in booking_id
+            # 3rd for loop is just to get quantity from resource itself. For loop is needed to convert list to string
+            # The reason for a nested for loop is to make sure that we get the correct "pair" that we want to modify or atleast use its values to modify something else
+            for i in listQuantity:
+                stringQuantity += str(i)
+                for k in listID:
+                    stringID += str(k)
+                    # Get resource quantity from Resource
+                    c.execute("SELECT resource_quantity FROM Resource WHERE resource_id = {}".format(stringID))
+                    tupleCurrentResource = c.fetchall()
+                    listCurrentResource = functools.reduce(operator.add, (tupleCurrentResource))
+                    stringCurrentResource = ""
+                    for item in listCurrentResource:
+                        stringCurrentResource += str(item)
+                    newValue = int(stringCurrentResource) + int(stringQuantity)
+                    Booking.updateResource(self, "resource_quantity", newValue, "resource_id", stringID)
+                    stringID = ""
+                    stringQuantity = ""
+                    break
+
+            # Delete old bookings
+            c.execute("DELETE FROM Booking WHERE booking_start < DATETIME('NOW', '-1 days');")
+            self.conn.commit()
+            c.close()
+            return True
+        except TypeError as e:
+            return "An error occurred:", e.args[0]
 
     def updateBooking(self, column_name, new_value, where_column, value): # Not sure about the names yet
         """
