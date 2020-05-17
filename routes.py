@@ -1,6 +1,4 @@
 from flask import Flask, render_template, flash, request, redirect, session, url_for
-from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField
-from flask_sqlalchemy import SQLAlchemy
 import Project
 import os
 import functools, operator # To convert tuple to list
@@ -20,11 +18,11 @@ app.config['SECRET_KEY'] = '7d441f27d441f275asdasd6352567d441f2b6176a'
 
 @app.route("/", methods=['GET', 'POST'])
 def login():
-    global name
     if request.method == 'POST':
         name=request.form['name']
+        name=name.lower()
         password=request.form['password']
-            
+        
         if user.verifyLogin(name, password):
             session['name'] = name
             return redirect(url_for("welcome"))
@@ -47,12 +45,16 @@ def registration():
     if request.method == 'POST':
         userID = user.IDGenerator("user_id", "User")
         username=request.form['username']
+        username=username.lower()
         password=request.form['password']
         email=request.form['email']
-        user.createUser(userID, username, password, email, True, True)
-
-        print(userID, password)
-        return redirect(url_for("login"))  
+        email=email.lower()
+        if email == "" or username == "" or password == "":
+            flash("Error: You must fill out every form")
+        else:
+            user.createUser(userID, username, password, email, True, True)
+            print(userID, username, password, email)
+            return redirect(url_for("login"))
     return render_template('registration.html')
 
 @app.route("/resources")
@@ -92,7 +94,7 @@ def reservation():
         print(quantity)
         if booking.createBooking(quantity, resourceID, bookingID): # If resources are not available
             return redirect(url_for("reservation"))
-        EmailConfirm.sendEmail(user.readUserEmail(name)) # Sends an email to users email address
+        EmailConfirm.sendEmail(user.readUserEmail(session['name'])) # Sends an email to users email address
         booking.setUsernameBooking(session['name'], bookingID)
         booking.setQuantityBooking(quantity, bookingID)
         booking.setResourceIDinBooking(resourceID, bookingID)

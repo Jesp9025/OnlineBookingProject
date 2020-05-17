@@ -1,4 +1,5 @@
 import os, sqlite3, datetime, functools, operator, random
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class Resource(object):
     resourceQuantity = int
@@ -297,7 +298,8 @@ class User(Booking):
         """
         Example: createUser(1564, "jesp9025", "1234", jesp9025@live.dk, True, True)
         """
-        try:            
+        try:
+            password = generate_password_hash(password)
             c = self.conn.cursor()
             c.execute("INSERT INTO User (user_id, user_username, user_password, user_email, user_is_admin, user_account_is_active) VALUES ({}, '{}', '{}', '{}', '{}', '{}')".format(userID, username, password, email, userisAdmin, accountIsActive))
             self.conn.commit()
@@ -310,7 +312,7 @@ class User(Booking):
     def verifyUserActiveStatus(self):
         return True
     
-    # Fuck my life. convert from tuple to list, from list to str to check password
+    # Gotta convert from tuple to list, from list to str to check password
     def verifyLogin(self, username, password):
         '''Verifies the login by comparing password from database with input password
         '''
@@ -322,7 +324,7 @@ class User(Booking):
             toString = ""
             for i in toList:
                 toString += str(i)
-            if toString == password:
+            if check_password_hash(toString, password): # Checks if password input matches the hashed password in database
                 c.close
                 return True
             else:
