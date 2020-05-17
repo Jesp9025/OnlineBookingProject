@@ -82,15 +82,19 @@ def reservation():
         resourceID=request.form['ID']
         quantity=request.form['quantity']
         bookingID = user.IDGenerator("booking_id", "Booking")
+        print(bookingID)
         
         try:
             quantity = int(quantity)
         except (TypeError, ValueError) as e:
             print(e)
-        
+        print(quantity)
         if booking.createBooking(quantity, resourceID, bookingID): # If resources are not available
             return redirect(url_for("reservation"))
         EmailConfirm.sendEmail(user.readUserEmail(name)) # Sends an email to users email address
+        booking.setUsernameBooking(session['name'], bookingID)
+        booking.setQuantityBooking(quantity, bookingID)
+        booking.setResourceIDinBooking(resourceID, bookingID)
         return redirect(url_for("confirm"))
 
     return render_template("reservation.html")

@@ -182,6 +182,38 @@ class Booking(Lab):
         except sqlite3.Error as e:
             return "An error occurred:", e.args[0]
 
+    def setUsernameBooking(self, username, bookingID):
+        '''Sets booking_user_id to whatever is passed as argument
+        '''
+        try:
+            c = self.conn.cursor()
+            c.execute("UPDATE Booking SET booking_user_username = '{}' WHERE booking_id = {}".format(username, bookingID))
+            self.conn.commit()
+            c.close()
+            return True
+        except sqlite3.Error as e:
+            return "An error occurred:", e.args[0]
+
+    def setQuantityBooking(self, quantity, bookingID):
+        try:
+            c = self.conn.cursor()
+            c.execute("UPDATE Booking SET booking_resource_quantity = {} WHERE booking_id = {}".format(quantity, bookingID))
+            self.conn.commit()
+            c.close()
+            return True
+        except sqlite3.Error as e:
+            return "An error occurred:", e.args[0]
+
+    def setResourceIDinBooking(self, resourceID, bookingID):
+        try:
+            c = self.conn.cursor()
+            c.execute("UPDATE Booking SET booking_resource_id = {} WHERE booking_id = {}".format(resourceID, bookingID))
+            self.conn.commit()
+            c.close()
+            return True
+        except sqlite3.Error as e:
+            return "An error occurred:", e.args[0]
+
     def deleteBooking(self, column_name, value): # Not sure about the names yet
         """
         Example: deleteBooking("Booking", "booking_id", "21235")
