@@ -62,6 +62,7 @@ def resources():
     booking.deleteOldBookings()
     lst = res.readResource()
     data = lst
+    print(user.checkIfAdmin(session['name'])) # Test to see if user in session is admin
     return render_template("resources.html", data=data)
 
 @app.route("/bookings")

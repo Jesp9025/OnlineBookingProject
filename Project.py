@@ -41,7 +41,7 @@ class Resource(object):
 
 
     def updateResource(self, column_name, new_value, where_column, value): # Not sure about the names yet
-        """
+        """Updates Resource table with whatever is passed as arguments\n
         Example: updateResource("resource_Quantity", "30", "resource_Model", "3570")
         """
         try:
@@ -55,7 +55,7 @@ class Resource(object):
 
 
     def deleteResource(self, column_name, value): # Not sure about the names yet
-        """
+        """Delete everything from Resource table where column_name == value\n
         Example: deleteResource("resource_model", "DX850")
         """
         try:
@@ -96,7 +96,7 @@ class Lab(Resource):
         return lst
 
     def updateLab(self, table, column_name, new_value, where_column, value): # Not sure about the names yet
-        """
+        """Updates stuff in Lab table to anything you want
         Example: updateLab("lab_description", "new description", "lab_name", "IoT")
         """
         try:
@@ -109,8 +109,8 @@ class Lab(Resource):
             return "An error occurred:", e.args[0]
 
     def deleteLab(self, column_name, value): # Not sure about the names yet
-        """
-        Example: deleteLab("Lab", "lab_name", "IoT")
+        """Delete everything from Lab table where column_name == value\n
+        Example: deleteLab("lab_name", "IoT")
         """
         try:
             c = self.conn.cursor()
@@ -127,6 +127,8 @@ class Booking(Lab):
     isBooked = bool
 
     def createBooking(self, quantity, resourceID, bookingID):
+        '''Creates a new booking. Checks if enough equipment is available
+        '''
         c = self.conn.cursor()
         c.execute("SELECT resource_quantity FROM Resource WHERE resource_id = {}".format(resourceID))
         lst = c.fetchall()
@@ -205,8 +207,8 @@ class Booking(Lab):
             return "An error occurred:", e.args[0]
 
     def updateBooking(self, column_name, new_value, where_column, value): # Not sure about the names yet
-        """
-        Example: updateBooking("booking_end", "2020-05-17", "booking_id", "21235")
+        """Update anything from Booking table\n
+        Example: updateBooking("booking_start", "2020-05-17", "booking_id", "21235")
         """
         try:
             c = self.conn.cursor()
@@ -218,7 +220,7 @@ class Booking(Lab):
             return "An error occurred:", e.args[0]
 
     def setUsernameBooking(self, username, bookingID):
-        '''Sets booking_user_id to whatever is passed as argument
+        '''Sets booking_user_username to whatever is passed as username argument
         '''
         try:
             c = self.conn.cursor()
@@ -230,6 +232,8 @@ class Booking(Lab):
             return "An error occurred:", e.args[0]
 
     def setQuantityBooking(self, quantity, bookingID):
+        '''Updates quantity in Booking to whatever is passed as quantity argument
+        '''
         try:
             c = self.conn.cursor()
             c.execute("UPDATE Booking SET booking_resource_quantity = {} WHERE booking_id = {}".format(quantity, bookingID))
@@ -240,6 +244,8 @@ class Booking(Lab):
             return "An error occurred:", e.args[0]
 
     def setResourceIDinBooking(self, resourceID, bookingID):
+        '''Updates the booking_resource_id in Booking to whatever is passed as resourceID argument
+        '''
         try:
             c = self.conn.cursor()
             c.execute("UPDATE Booking SET booking_resource_id = {} WHERE booking_id = {}".format(resourceID, bookingID))
@@ -273,8 +279,9 @@ class User(Booking):
     userisAdmin = bool
     accountIsActive = bool
 
-    # Maybe a bad way to do it?
     def readUserEmail(self, username):
+        '''Reads users email address and returns it
+        '''
         c = self.conn.cursor()
         c.execute("SELECT user_email FROM User WHERE user_username = '{}'".format(username))
         lst = c.fetchall()
@@ -305,6 +312,8 @@ class User(Booking):
     
     # Fuck my life. convert from tuple to list, from list to str to check password
     def verifyLogin(self, username, password):
+        '''Verifies the login by comparing password from database with input password
+        '''
         try:
             c = self.conn.cursor()            
             c.execute("SELECT user_password FROM User WHERE user_username = '{}'".format(username))
@@ -321,10 +330,20 @@ class User(Booking):
         except TypeError:
             print("Something went wrong")
 
-    def checkIfAdmin(self):
-        return True
+    def checkIfAdmin(self, username):
+        '''Example:\n
+        checkIfAdmin(session['name'])
+        '''
+        c = self.conn.cursor()
+        if c.execute("SELECT user_is_admin FROM User WHERE user_username = '{}'".format(username)):
+            return True
+        else:
+            return False
+        
 
     def IDGenerator(self, column_name, table):
+        '''Generates a unique ID for User and Booking by checking if it already exists in database
+        '''
         ID = random.randint(1, 99999)
         c = self.conn.cursor()
         c.execute("SELECT {} FROM {} WHERE {} = {}".format(column_name, table, ID, column_name))
