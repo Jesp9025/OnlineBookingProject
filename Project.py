@@ -153,6 +153,8 @@ class Booking(Lab):
                     print(e)
                     return True
     
+    
+
     def readBooking(self):
         """Reads everything in Booking table
         """
@@ -268,7 +270,7 @@ class Booking(Lab):
         """
         try:
             c = self.conn.cursor()
-    
+        
             # Get resource quantity from Booking
             c.execute("SELECT booking_resource_quantity FROM Booking WHERE {} = '{}';".format(column_name, value))
             tupleQuantity = c.fetchall()
