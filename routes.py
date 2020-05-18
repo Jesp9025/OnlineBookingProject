@@ -157,7 +157,10 @@ def deletebooking():
     try:
         if request.method == 'POST':
             bookingID=request.form['ID']
-            booking.deleteBooking("booking_id", bookingID)
+            if user.checkIfAdmin(session['name']) == True:
+                booking.deleteBooking("booking_id", bookingID)
+            else:
+                booking.deleteOwnBooking("booking_id", bookingID, session['name'])
 
         if user.checkIfAdmin(session['name']) == False:
             booking.deleteOldBookings()

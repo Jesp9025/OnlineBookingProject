@@ -270,7 +270,7 @@ class Booking(Lab):
         """
         try:
             c = self.conn.cursor()
-        
+    
             # Get resource quantity from Booking
             c.execute("SELECT booking_resource_quantity FROM Booking WHERE {} = '{}';".format(column_name, value))
             tupleQuantity = c.fetchall()
@@ -306,8 +306,48 @@ class Booking(Lab):
             c.close()
             return True
 
+        except sqlite3.Error as e:
+            return "An error occurred:", e.args[0]
 
-
+    def deleteOwnBooking(self, column_name, value, username):
+        try:
+            c = self.conn.cursor()
+    
+            # Get resource quantity from Booking
+            c.execute("SELECT booking_resource_quantity FROM Booking WHERE {} = '{}' AND booking_user_username = '{}';".format(column_name, value, username))
+            tupleQuantity = c.fetchall()
+            listQuantity = functools.reduce(operator.add, (tupleQuantity))
+            # Get resource ID from Booking
+            c.execute("SELECT booking_resource_id FROM Booking WHERE {} = '{}' AND booking_user_username = '{}';".format(column_name, value, username))
+            tupleID = c.fetchall()
+            listID = functools.reduce(operator.add, (tupleID))
+            stringID = ""
+            stringQuantity = ""
+            # 1st for loop is to get first item in booking_resource_quantity
+            # 2nd for loop is to get first item in booking_id
+            # 3rd for loop is just to get quantity from resource itself. For loop is needed to convert list to string
+            # The reason for a nested for loop is to make sure that we get the correct "pair" that we want to modify or atleast use its values to modify something else
+            for i in listQuantity:
+                stringQuantity += str(i)
+                for k in listID:
+                    stringID += str(k)
+                    # Get resource quantity from Resource
+                    c.execute("SELECT resource_quantity FROM Resource WHERE resource_id = {}".format(stringID))
+                    tupleCurrentResource = c.fetchall()
+                    listCurrentResource = functools.reduce(operator.add, (tupleCurrentResource))
+                    stringCurrentResource = ""
+                    for item in listCurrentResource:
+                        stringCurrentResource += str(item)
+                    newValue = int(stringCurrentResource) + int(stringQuantity)
+                    Booking.updateResource(self, "resource_quantity", newValue, "resource_id", stringID)
+                    stringID = ""
+                    stringQuantity = ""
+                    break
+            c.execute("DELETE FROM Booking WHERE {} = '{}' AND booking_user_username = '{}'".format(column_name, value, username))
+            self.conn.commit()
+            c.close()
+            return True
+            
         except sqlite3.Error as e:
             return "An error occurred:", e.args[0]
 
