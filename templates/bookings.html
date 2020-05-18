@@ -22,8 +22,8 @@
 <div class="container">
 <h2>Bookings</h2>
 <body>
-  {%for value in data%}
-     <p>{{value}}</p>
-  {%endfor%}
- </body>
- <!Reference: https://stackoverflow.com/questions/47442632/how-to-write-a-python-for-loop-in-an-html-file/47442724 -->
+   {%for value in data%}
+    <p>{{value | replace("(", "") | replace(")", "") | replace(":", "=") | replace("'", "") | replace("=,", ":")}}</p>
+   {%endfor%}
+  </body>
+  <!Reference: https://stackoverflow.com/questions/47442632/how-to-write-a-python-for-loop-in-an-html-file/47442724 -->

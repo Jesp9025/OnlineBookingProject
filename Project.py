@@ -35,11 +35,10 @@ class Resource(object):
         """Reads everything in Resource table
         """
         c = self.conn.cursor()
-        c.execute("select * from Resource")
+        c.execute("SELECT 'Resource ID:', resource_id, 'Quantity:', resource_quantity, 'Manufactorer:', resource_manufactorer, 'Model:', resource_model FROM Resource;")
         lst = c.fetchall()
         c.close()
         return lst
-
 
     def updateResource(self, column_name, new_value, where_column, value): # Not sure about the names yet
         """Updates Resource table with whatever is passed as arguments\n
@@ -158,10 +157,11 @@ class Booking(Lab):
         """Reads everything in Booking table
         """
         c = self.conn.cursor()
-        c.execute("select * from Booking")
+        c.execute("SELECT 'Booking ID:', booking_id, 'User:', booking_user_username, 'Booking Date:', booking_start, 'Resource ID:', booking_resource_id, 'Quantity:', booking_resource_quantity FROM Booking;")
         lst = c.fetchall()
         c.close()
         return lst
+
 
     def deleteOldBookings(self):
         '''Delete bookings that exceed 1 day and update resource quantity, in order words "return the equipment you reserved"
