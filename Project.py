@@ -162,6 +162,12 @@ class Booking(Lab):
         c.close()
         return lst
 
+    def readSpecificBooking(self, column_name, value):
+        c = self.conn.cursor()
+        c.execute("SELECT 'Booking ID:', booking_id, 'User:', booking_user_username, 'Booking Date:', booking_start, 'Resource ID:', booking_resource_id, 'Quantity:', booking_resource_quantity FROM Booking WHERE {} = '{}';".format(column_name, value))
+        lst = c.fetchall()
+        c.close()
+        return lst
 
     def deleteOldBookings(self):
         '''Delete bookings that exceed 1 day and update resource quantity, in order words "return the equipment you reserved"
@@ -257,15 +263,49 @@ class Booking(Lab):
             return "An error occurred:", e.args[0]
 
     def deleteBooking(self, column_name, value): # Not sure about the names yet
-        """
-        Example: deleteBooking("Booking", "booking_id", "21235")
+        """Deletes a booking and "returns" reserved equipment to resource_quantity
+        Example: deleteBooking("booking_id", "21235")
         """
         try:
             c = self.conn.cursor()
+    
+            # Get resource quantity from Booking
+            c.execute("SELECT booking_resource_quantity FROM Booking WHERE {} = '{}';".format(column_name, value))
+            tupleQuantity = c.fetchall()
+            listQuantity = functools.reduce(operator.add, (tupleQuantity))
+            # Get resource ID from Booking
+            c.execute("SELECT booking_resource_id FROM Booking WHERE {} = '{}';".format(column_name, value))
+            tupleID = c.fetchall()
+            listID = functools.reduce(operator.add, (tupleID))
+            stringID = ""
+            stringQuantity = ""
+            # 1st for loop is to get first item in booking_resource_quantity
+            # 2nd for loop is to get first item in booking_id
+            # 3rd for loop is just to get quantity from resource itself. For loop is needed to convert list to string
+            # The reason for a nested for loop is to make sure that we get the correct "pair" that we want to modify or atleast use its values to modify something else
+            for i in listQuantity:
+                stringQuantity += str(i)
+                for k in listID:
+                    stringID += str(k)
+                    # Get resource quantity from Resource
+                    c.execute("SELECT resource_quantity FROM Resource WHERE resource_id = {}".format(stringID))
+                    tupleCurrentResource = c.fetchall()
+                    listCurrentResource = functools.reduce(operator.add, (tupleCurrentResource))
+                    stringCurrentResource = ""
+                    for item in listCurrentResource:
+                        stringCurrentResource += str(item)
+                    newValue = int(stringCurrentResource) + int(stringQuantity)
+                    Booking.updateResource(self, "resource_quantity", newValue, "resource_id", stringID)
+                    stringID = ""
+                    stringQuantity = ""
+                    break
             c.execute("DELETE FROM Booking WHERE {} = '{}'".format(column_name, value))
             self.conn.commit()
             c.close()
             return True
+
+
+
         except sqlite3.Error as e:
             return "An error occurred:", e.args[0]
 
@@ -337,10 +377,13 @@ class User(Booking):
         checkIfAdmin(session['name'])
         '''
         c = self.conn.cursor()
-        if c.execute("SELECT user_is_admin FROM User WHERE user_username = '{}'".format(username)):
-            return True
-        else:
-            return False
+        c.execute("SELECT user_is_admin FROM User WHERE user_username = '{}'".format(username))
+        lst = c.fetchall()
+        toList = functools.reduce(operator.add, (lst))
+        for item in toList:
+            if item == "True":
+                return True
+        return False
         
 
     def IDGenerator(self, column_name, table):

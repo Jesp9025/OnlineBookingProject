@@ -117,5 +117,54 @@ def welcome():
         return redirect(url_for("login"))
     return render_template("welcome.html")
 
+@app.route("/denied")
+def denied():
+    if "name" not in session:
+        return redirect(url_for("login"))
+    return render_template("denied.html")
+
+@app.route("/deleteresource", methods=['GET', 'POST'])
+def deleteresource():
+    if "name" not in session:
+        return redirect(url_for("login"))
+
+    if user.checkIfAdmin(session['name']) == False:
+        return redirect(url_for("denied"))
+
+    if request.method == 'POST':
+            resourceID=request.form['ID']
+            res.deleteResource("resource_ID", resourceID)
+
+
+    booking.deleteOldBookings()
+    lst = res.readResource()
+    print(lst)
+    #print(user.checkIfAdmin(session['name'])) # Test to see if user in session is admin
+    return render_template("deleteresource.html", data=lst)
+
+
+
+@app.route("/deletebooking", methods=['GET', 'POST'])
+def deletebooking():
+    if "name" not in session:
+        return redirect(url_for("login"))
+
+    try:
+        if request.method == 'POST':
+            bookingID=request.form['ID']
+            booking.deleteBooking("booking_id", bookingID)
+
+        if user.checkIfAdmin(session['name']) == False:
+            booking.deleteOldBookings()
+            lst = booking.readSpecificBooking("booking_user_username", session['name'])
+        else:
+            booking.deleteOldBookings()
+            lst = booking.readBooking()
+            
+        return render_template("deletebooking.html", data=lst)
+    except TypeError as e:
+        print(e)
+        return render_template("deletebooking.html")
+
 if __name__ == "__main__":
     app.run()

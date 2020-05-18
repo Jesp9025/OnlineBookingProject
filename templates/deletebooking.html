@@ -1,4 +1,4 @@
-<title>Resources</title>
+<title>Delete Booking</title>
         	 	<link rel="stylesheet" media="screen" href="static/bootstrap.min.css">
         	 	<link rel="stylesheet" href="static/bootstrap-theme.min.css">
        <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +13,7 @@
       <input type="submit" value="Resources" />
    </form>
    <form action="/bookings">
-    <input type="submit" value="Bookings" />
+      <input type="submit" value="Bookings" />
    </form>
    <form action="/reservation">
       <input type="submit" value="Make Reservation" />
@@ -24,13 +24,21 @@
     <form action="/deleteresource">
         <input type="submit" value="Delete Resource" />
     </form>
-    <form action="/deletebooking">
+</div>
+<h1>Delete Booking</h1>
+<div class="container">
+    <h2>Bookings</h2>
+    <body>
+       {%for value in data%}
+        <p>{{value | replace("(", "") | replace(")", "") | replace(":", "=") | replace("'", "") | replace("=,", ":")}}</p>
+       {%endfor%}
+      </body>
+      <!Reference: https://stackoverflow.com/questions/47442632/how-to-write-a-python-for-loop-in-an-html-file/47442724 -->
 </div>
 <div class="container">
-<h2>Bookings</h2>
-<body>
-   {%for value in data%}
-    <p>{{value | replace("(", "") | replace(")", "") | replace(":", "=") | replace("'", "") | replace("=,", ":")}}</p>
-   {%endfor%}
-  </body>
-  <!Reference: https://stackoverflow.com/questions/47442632/how-to-write-a-python-for-loop-in-an-html-file/47442724 -->
+    <form action="" method="post" role="form">
+    <label for="ID">Booking ID:</label>
+    <input type="text" class="form-control" id="ID" name="ID">
+    <button type="submit" class="btn btn-success">Confirm</button>
+    </form>
+</div>

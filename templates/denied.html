@@ -1,4 +1,4 @@
-<title>Resources</title>
+<title>Access Denied</title>
         	 	<link rel="stylesheet" media="screen" href="static/bootstrap.min.css">
         	 	<link rel="stylesheet" href="static/bootstrap-theme.min.css">
        <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,17 +19,15 @@
       <input type="submit" value="Make Reservation" />
    </form>
    <form action="/deletebooking">
-      <input type="submit" value="Delete Booking" />
-   </form>
-   <form action="/deleteresource">
-      <input type="submit" value="Delete Resource" />
-   </form>
+    <input type="submit" value="Delete Booking" />
+    </form>
+    <form action="/deleteresource">
+        <input type="submit" value="Delete Resource" />
+    </form>
 </div>
-<div class="container">
-<h2>Resources</h2>
-<body>
-  {%for value in data%}
-   <p>{{value | replace("(", "") | replace(")", "") | replace(":", "=") | replace("'", "") | replace("=,", ":")}}</p>
-  {%endfor%}
- </body>
- <!Reference: https://stackoverflow.com/questions/47442632/how-to-write-a-python-for-loop-in-an-html-file/47442724 -->
+<h1>Access has been denied. Are you not staff member?</h1>
+
+<audio  autoplay>
+    <source src="https://www.myinstants.com/media/sounds/magicword.mp3"  type="audio/mp3">
+   Your browser does not support the audio element.
+   </audio>
