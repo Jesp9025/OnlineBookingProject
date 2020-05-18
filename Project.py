@@ -265,7 +265,8 @@ class Booking(Lab):
             return "An error occurred:", e.args[0]
 
     def deleteBooking(self, column_name, value): # Not sure about the names yet
-        """Deletes a booking and "returns" reserved equipment to resource_quantity
+        """Deletes a booking and "returns" reserved equipment to resource_quantity\n
+        This is for admins\n
         Example: deleteBooking("booking_id", "21235")
         """
         try:
@@ -310,6 +311,10 @@ class Booking(Lab):
             return "An error occurred:", e.args[0]
 
     def deleteOwnBooking(self, column_name, value, username):
+        '''Use this to delete booking for logged in user only\n
+        In other words: This is for non-admins\n
+        Example: deleteOwnBooking("booking_id", "61748", session['name'])
+        '''
         try:
             c = self.conn.cursor()
     
