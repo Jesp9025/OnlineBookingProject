@@ -15,8 +15,15 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 app.config['SECRET_KEY'] = '7d441f27d441f275asdasd6352567d441f2b6176a'
 
+@app.route("/")
+def mainpage():
+    return render_template("mainpage.html")
 
-@app.route("/", methods=['GET', 'POST'])
+@app.route("/authors")
+def authors():
+    return render_template("authors.html")
+
+@app.route("/login", methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         name=request.form['name']
@@ -31,7 +38,7 @@ def login():
     if "name" in session:
         return redirect(url_for("welcome"))
     else:
-        return render_template('index.html')
+        return render_template('login.html')
 
 @app.route("/logout")
 def logout():

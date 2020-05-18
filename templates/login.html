@@ -1,0 +1,42 @@
+<title>Login</title>
+        	 	<link rel="stylesheet" media="screen" href="static/bootstrap.min.css">
+                     <link rel="stylesheet" href="static/bootstrap-theme.min.css">
+                     <link rel="icon" type="image/png" href="../static/favicon.ico">
+       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <form action="/">
+            <input type="submit" value="Main Page" />
+         </form>
+<div class="container">
+<h2>Equipment Booking System</h2>
+<form action="" method="post" role="form">
+      <label for="name">Username:</label>
+<input type="text" class="form-control" id="name" name="name" placeholder="Username">
+
+<label for="password">Password:</label>
+<input type="password" class="form-control" id="password" name="password" placeholder="Password">
+<button type="submit" class="btn btn-success">Log In</button>
+</form>
+<div class="btn-group"></div>
+<form action="/registration">
+      <input type="submit" value="Register" class="btn btn-success"/>
+</form>
+<form action="/about">
+      <input type="submit" value="About" class="btn btn-success"/>
+</div>
+</form>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+
+{% for message in messages %}
+
+
+{% if "Error" in message[1]: %}
+<div class="alert alert-warning">
+                {{ message[1] }}</div>
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endwith %}
+</div>
