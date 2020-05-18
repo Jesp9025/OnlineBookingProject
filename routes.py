@@ -98,8 +98,8 @@ def reservation():
         booking.setQuantityBooking(quantity, bookingID)
         booking.setResourceIDinBooking(resourceID, bookingID)
         return redirect(url_for("confirm"))
-
-    return render_template("reservation.html")
+    lst = res.readResource()
+    return render_template("reservation.html", data=lst)
 
 @app.route("/about")
 def about():
@@ -141,8 +141,6 @@ def deleteresource():
     print(lst)
     #print(user.checkIfAdmin(session['name'])) # Test to see if user in session is admin
     return render_template("deleteresource.html", data=lst)
-
-
 
 @app.route("/deletebooking", methods=['GET', 'POST'])
 def deletebooking():

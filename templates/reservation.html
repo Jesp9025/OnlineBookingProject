@@ -25,8 +25,16 @@
           <input type="submit" value="Delete Resource" />
       </form>
 </div>
+<h1>Make Reservation</h1>
 <div class="container">
-   <h2>Reservation</h2>
+   <h2>Resources</h2>
+   <body>
+     {%for value in data%}
+      <p>{{value | replace("(", "") | replace(")", "") | replace(":", "=") | replace("'", "") | replace("=,", ":")}}</p>
+     {%endfor%}
+    </body>
+    <!Reference: https://stackoverflow.com/questions/47442632/how-to-write-a-python-for-loop-in-an-html-file/47442724 -->
+<div class="container">
    <form action="" method="post" role="form">
    <label for="ID">Resource ID:</label>
    <input type="text" class="form-control" id="ID" name="ID">
