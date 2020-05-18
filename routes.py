@@ -3,6 +3,7 @@ import Project
 import os
 import functools, operator # To convert tuple to list
 import EmailConfirm
+from werkzeug.security import generate_password_hash
 
 # To get methods from classes
 res = Project.Resource()
@@ -59,7 +60,7 @@ def registration():
         if email == "" or username == "" or password == "":
             flash("Error: You must fill out every form")
         else:
-            user.createUser(userID, username, password, email, True, True)
+            user.createUser(userID, username, password, email, False, True)
             print(userID, username, password, email)
             return redirect(url_for("login"))
     return render_template('registration.html')
@@ -174,5 +175,129 @@ def deletebooking():
         print(e)
         return render_template("deletebooking.html")
 
+@app.route("/updateuser")
+def updateuser():
+    if "name" not in session:
+        return redirect(url_for("login"))
+    if user.checkIfAdmin(session['name']) == False:
+        return redirect(url_for("denied"))
+
+    return render_template("updateuser.html")
+
+@app.route("/updateusername", methods=['GET', 'POST'])
+def updateusername():
+    if "name" not in session:
+        return redirect(url_for("login"))
+    if user.checkIfAdmin(session['name']) == False:
+        return redirect(url_for("denied"))
+
+    lst = user.readUsername()
+    try:
+        if request.method == 'POST':
+            currentUsername=request.form['name']
+            newUsername=request.form['name2']
+            if currentUsername == "" or newUsername == "":
+                flash("Error: Fill out the forms")
+            else:
+                user.updateUserAnything("UPDATE User SET user_username = '{}' WHERE user_username = '{}'".format(newUsername, currentUsername))
+                flash("Success: Username has been updated")
+                return redirect(url_for("welcome"))
+    except (TypeError, ValueError) as e:
+        return e
+
+    return render_template("updateusername.html", data=lst)
+
+@app.route("/updatepassword", methods=['GET', 'POST'])
+def updatepassword():
+    if "name" not in session:
+        return redirect(url_for("login"))
+    if user.checkIfAdmin(session['name']) == False:
+        return redirect(url_for("denied"))
+
+    lst = user.readUsername()
+    try:
+        if request.method == 'POST':
+            username=request.form['name']
+            password=request.form['password']
+            password2=request.form['password2']
+
+            if password == password2:
+                if username == "" or password == "" or password2 == "":
+                    flash("Error: Fill out the forms")
+                else:
+                    newPassword = generate_password_hash(password)
+                    user.updateUserAnything("UPDATE User SET user_password = '{}' WHERE user_username = '{}'".format(newPassword, username))
+                    flash("Success: User password has been updated")
+                    return redirect(url_for("welcome"))
+            else:
+                flash("Error: Passwords didn't match")
+    except (TypeError, ValueError) as e:
+        return e
+    return render_template("updatepassword.html", data=lst)
+
+@app.route("/updateemail", methods=['GET', 'POST'])
+def updateemail():
+    if "name" not in session:
+        return redirect(url_for("login"))
+    if user.checkIfAdmin(session['name']) == False:
+        return redirect(url_for("denied"))
+
+    lst = user.readUsername()
+    try:
+        if request.method == 'POST':
+            username=request.form['name']
+            email=request.form['email']
+            if username == "" or email == "":
+                flash("Error: Fill out the forms")
+            else:
+                user.updateUserAnything("UPDATE User SET user_email = '{}' WHERE user_username = '{}'".format(email, username))
+                flash("Success: User Email has been updated")
+                return redirect(url_for("welcome"))
+    except (TypeError, ValueError) as e:
+        return e
+    return render_template("updateemail.html", data=lst)
+
+@app.route("/updateadminstatus", methods=['GET', 'POST'])
+def updateadminstatus():
+    if "name" not in session:
+        return redirect(url_for("login"))
+    if user.checkIfAdmin(session['name']) == False:
+        return redirect(url_for("denied"))
+
+    lst = user.readUsername()
+    try:
+        if request.method == 'POST':
+            username=request.form['name']
+            admin=request.form['status']
+            if username == "":
+                flash("Error: Enter a username")
+            else:
+                user.updateUserAnything("UPDATE User SET user_is_admin = '{}' WHERE user_username = '{}'".format(admin, username))
+                flash("Success: User Admin Status has been updated")
+                return redirect(url_for("welcome"))
+    except (TypeError, ValueError) as e:
+        return e
+    return render_template("updateadminstatus.html", data=lst)
+
+@app.route("/deleteuser", methods=['GET', 'POST'])
+def deleteuser():
+    if "name" not in session:
+        return redirect(url_for("login"))
+    if user.checkIfAdmin(session['name']) == False:
+        return redirect(url_for("denied"))
+
+    lst = user.readUsername()
+    try:
+        if request.method == 'POST':
+            username=request.form['name']
+            if username == "":
+                flash("Error: Enter a username")
+            else:
+                user.updateUserAnything("DELETE FROM User WHERE user_username = '{}'".format(username))
+                flash("Success: User has been deleted")
+                return redirect(url_for("welcome"))
+    except (TypeError, ValueError) as e:
+        return e
+    return render_template("deleteuser.html", data=lst)
 if __name__ == "__main__":
     app.run()

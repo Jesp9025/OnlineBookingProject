@@ -1,0 +1,117 @@
+<title>Update Admin Status</title>
+        	 	<link rel="stylesheet" media="screen" href="static/bootstrap.min.css">
+               <link rel="stylesheet" href="static/bootstrap-theme.min.css">
+               <link rel="icon" type="image/png" href="../static/favicon.ico">
+       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+       <style>
+        .alert {
+          padding: 20px;
+          background-color: #f44336;
+          color: white;
+        }
+        
+        .closebtn {
+          margin-left: 15px;
+          color: white;
+          font-weight: bold;
+          float: right;
+          font-size: 22px;
+          line-height: 20px;
+          cursor: pointer;
+          transition: 0.3s;
+        }
+        
+        .closebtn:hover {
+          color: black;
+        }
+        </style>
+
+       <div class="btn-group">
+        <form action="/logout">
+           <input type="submit" value="Logout" />
+        </form>
+        <form action="/">
+           <input type="submit" value="Main Page" />
+        </form>
+        <form action="/welcome">
+           <input type="submit" value="Front Page" />
+        </form>
+        <form action="/resources">
+           <input type="submit" value="Resources" />
+        </form>
+        <form action="/bookings">
+           <input type="submit" value="Bookings" />
+        </form>
+        <form action="/reservation">
+           <input type="submit" value="Make Reservation" />
+        </form>
+        <form action="/deletebooking">
+         <input type="submit" value="Delete Booking" />
+         </form>
+         <form action="/deleteresource">
+             <input type="submit" value="Delete Resource" />
+         </form>
+         <form action="/updateuser">
+           <input type="submit" value="Update User" />
+       </form>
+     </div>
+<h1>Update Admin Status</h1>
+<div class="container">
+    <h1>What do you want to update?</h1>
+<div class="btn-group">
+    <form action="/updateusername">
+        <input type="submit" value="Username" />
+    </form>
+    <form action="/updatepassword">
+        <input type="submit" value="Password" />
+    </form>
+    <form action="/updateemail">
+        <input type="submit" value="Email" />
+    </form>
+    <form action="/updateadminstatus">
+        <input type="submit" value="Admin Status" />
+    </form>
+    <form action="/deleteuser">
+        <input type="submit" value="Delete User" />
+    </form>
+</div>
+</div>
+<div class="container">
+    <h2>Users</h2>
+    <body>
+       {%for value in data%}
+        <p>{{value | replace("(", "") | replace(")", "") | replace(":", "=") | replace("'", "") | replace("=,", ":")}}</p>
+       {%endfor%}
+      </body>
+      <!Reference: https://stackoverflow.com/questions/47442632/how-to-write-a-python-for-loop-in-an-html-file/47442724 -->
+</div>
+<div class="container">
+    <form action="" method="post" role="form">
+    <p>---</p>
+    <label for="name">Username:</label>
+    <input type="text" class="form-control" id="name" name="name">
+    <label for="status"> Admin Status</label><br>
+    <input type="checkbox" id="status" name="status" value="True">
+    <input type="hidden" id="status2" name="status" value="False">
+    <p> </p>
+    <button type="submit" class="btn btn-success">Confirm</button>
+    </form>
+    <div class="alert">
+        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+        <strong>Warning!</strong> There is no going back once you click Confirm!
+      </div>
+</div>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+
+{% for message in messages %}
+
+
+{% if "Error" in message[1]: %}
+<div class="alert alert-warning">
+                {{ message[1] }}</div>
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endwith %}

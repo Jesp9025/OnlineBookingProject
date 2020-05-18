@@ -326,7 +326,6 @@ class User(Booking):
         return email
         
 
-
     def createUser(self, userID, username, password, email, userisAdmin, accountIsActive):
         """
         Example: createUser(1564, "jesp9025", "1234", jesp9025@live.dk, True, True)
@@ -365,18 +364,22 @@ class User(Booking):
         except TypeError:
             print("Something went wrong")
 
+
     def checkIfAdmin(self, username):
         '''Example:\n
         checkIfAdmin(session['name'])
         '''
-        c = self.conn.cursor()
-        c.execute("SELECT user_is_admin FROM User WHERE user_username = '{}'".format(username))
-        lst = c.fetchall()
-        toList = functools.reduce(operator.add, (lst))
-        for item in toList:
-            if item == "True":
-                return True
-        return False
+        try:
+            c = self.conn.cursor()
+            c.execute("SELECT user_is_admin FROM User WHERE user_username = '{}'".format(username))
+            lst = c.fetchall()
+            toList = functools.reduce(operator.add, (lst))
+            for item in toList:
+                if item == "True":
+                    return True
+            return False
+        except TypeError:
+            pass
         
 
     def IDGenerator(self, column_name, table):
@@ -390,3 +393,34 @@ class User(Booking):
             if item == ID:
                 ID = random.randint(1, 99999)
         return ID
+    
+    
+    def readUsername(self):
+        c = self.conn.cursor()
+        c.execute("SELECT user_username FROM User")
+        lst = c.fetchall()
+        c.close()
+        return lst
+
+
+    def readUserAnything(self, param):
+        '''Insert query string
+        '''
+        c = self.conn.cursor()
+        c.execute(param)
+        lst = c.fetchall()
+        c.close()
+        return lst
+
+    def updateUserAnything(self, param):
+        try:
+            c = self.conn.cursor()
+            print(3)
+            c.execute(param)
+            print(4)
+            self.conn.commit()
+            print(5)
+            c.close()
+            return True
+        except sqlite3.Error as e:
+            return "An error occurred:", e.args[0]
