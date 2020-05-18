@@ -67,61 +67,7 @@ class Resource(object):
         except sqlite3.Error as e:
             return "An error occurred:", e.args[0]
 
-
-class Lab(Resource):
-    labName = str
-    labDescription = str
-    labResouceID = int
-
-    def createLab(self, labID, labName, labDescription):
-        """
-        Example: createLab(21235, "Infrastructure", "Students learn how to set up a server")
-        """
-        try:            
-            c = self.conn.cursor()
-            c.execute("INSERT INTO Lab (lab_id, lab_name, lab_description) VALUES ({}, '{}', '{}')".format(labID, labName, labDescription))
-            self.conn.commit()
-            c.close()
-            return True
-        except sqlite3.Error as e:
-            return "An error occurred:", e.args[0]
-    
-    def readLab(self):
-        """Reads everything in Lab table
-        """
-        c = self.conn.cursor()
-        c.execute("select * from Lab")
-        lst = c.fetchall()
-        c.close()
-        return lst
-
-    def updateLab(self, table, column_name, new_value, where_column, value): # Not sure about the names yet
-        """Updates stuff in Lab table to anything you want
-        Example: updateLab("lab_description", "new description", "lab_name", "IoT")
-        """
-        try:
-            c = self.conn.cursor()
-            c.execute("UPDATE Lab SET {} = {} WHERE {} = '{}'".format(column_name, new_value, where_column, value))
-            self.conn.commit()
-            c.close()
-            return True
-        except sqlite3.Error as e:
-            return "An error occurred:", e.args[0]
-
-    def deleteLab(self, column_name, value): # Not sure about the names yet
-        """Delete everything from Lab table where column_name == value\n
-        Example: deleteLab("lab_name", "IoT")
-        """
-        try:
-            c = self.conn.cursor()
-            c.execute("DELETE FROM Lab WHERE {} = '{}'".format(column_name, value))
-            self.conn.commit()
-            c.close()
-            return True
-        except sqlite3.Error as e:
-            return "An error occurred:", e.args[0]
-
-class Booking(Lab):
+class Booking(Resource):
     bookingID = int
     bookingStart = datetime
     isBooked = bool
