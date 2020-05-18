@@ -63,7 +63,9 @@ def resources():
         return redirect(url_for("login"))
     booking.deleteOldBookings()
     lst = res.readResource()
-    data = lst
+    #data = {lst[i]: lst[i + 1] for i in range(0, len(lst), 2)}
+    data = {'ID': lst[i] for i in range(0, len(lst), 2)}
+    print(data)
     print(user.checkIfAdmin(session['name'])) # Test to see if user in session is admin
     return render_template("resources.html", data=data)
 
