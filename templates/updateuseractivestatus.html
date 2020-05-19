@@ -1,4 +1,4 @@
-<title>Update Password</title>
+<title>Update Admin Status</title>
         	 	<link rel="stylesheet" media="screen" href="static/bootstrap.min.css">
                <link rel="stylesheet" href="static/bootstrap-theme.min.css">
                <link rel="icon" type="image/png" href="../static/favicon.ico">
@@ -57,7 +57,7 @@
        </form>
      </div>
      <p>User logged in: {{ username }}</p>
-<h1>Update Password</h1>
+<h1>Update Admin Status</h1>
 <div class="container">
     <h1>What do you want to update?</h1>
 <div class="btn-group">
@@ -95,10 +95,10 @@
     <p>---</p>
     <label for="name">Username:</label>
     <input type="text" class="form-control" id="name" name="name">
-    <label for="password">New password:</label>
-    <input type="password" class="form-control" id="password" name="password">
-    <label for="password2">Confirm new password:</label>
-    <input type="password" class="form-control" id="password2" name="password2">
+    <label for="status"> Active Status</label><br>
+    <input type="checkbox" id="status" name="status" value="True">
+    <input type="hidden" id="status2" name="status" value="False">
+    <p> </p>
     <button type="submit" class="btn btn-success">Confirm</button>
     </form>
     <div class="alert">

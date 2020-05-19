@@ -40,6 +40,9 @@ def login():
         name=name.lower()
         password=request.form['password']
         
+        if user.verifyUserActiveStatus(name) == False:
+            flash("Error: Your account has been deactivated by an admin")
+            return redirect(url_for("login"))
         if user.verifyLogin(name, password):
             session['name'] = name
             return redirect(url_for("welcome"))
@@ -305,7 +308,7 @@ def updateadminstatus():
     if user.checkIfAdmin(session['name']) == False:
         return redirect(url_for("denied"))
 
-    lst = user.readUsername()
+    lst = user.readUserAnything("SELECT user_username, user_is_admin FROM User;")
     try:
         if request.method == 'POST':
             username=request.form['name']
@@ -341,6 +344,28 @@ def deleteuser():
     except (TypeError, ValueError) as e:
         return e
     return render_template("deleteuser.html", data=lst, username=session['name'])
+
+@app.route("/updateuseractivestatus", methods=['GET', 'POST'])
+def updateuseractivestatus():
+    if "name" not in session:
+        return redirect(url_for("login"))
+    if user.checkIfAdmin(session['name']) == False:
+        return redirect(url_for("denied"))
+
+    lst = user.readUserAnything("SELECT user_username, user_account_is_active FROM User;")
+    try:
+        if request.method == 'POST':
+            username=request.form['name']
+            active=request.form['status']
+            if username == "":
+                flash("Error: Enter a username")
+            else:
+                user.updateUserAnything("UPDATE User SET user_account_is_active = '{}' WHERE user_username = '{}'".format(active, username))
+                flash("Success: User Active Status has been updated")
+                return redirect(url_for("welcome"))
+    except (TypeError, ValueError) as e:
+        return e
+    return render_template("updateuseractivestatus.html", data=lst, username=session['name'])
 
 if __name__ == "__main__":
     app.run()

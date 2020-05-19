@@ -353,8 +353,18 @@ class User(Booking):
         except sqlite3.Error as e:
             return "An error occurred:", e.args[0]
 
-    def verifyUserActiveStatus(self):
-        return True
+    def verifyUserActiveStatus(self, username):
+        try:
+            c = self.conn.cursor()
+            c.execute("SELECT user_account_is_active FROM User WHERE user_username = '{}'".format(username))
+            lst = c.fetchall()
+            toList = functools.reduce(operator.add, (lst))
+            for item in toList:
+                if item == "True":
+                    return True
+            return False
+        except TypeError:
+            pass
     
 
     # Gotta convert from tuple to list, from list to str to check password
