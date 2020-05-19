@@ -85,7 +85,7 @@ def resources():
     lst = res.readResource()
     print(lst)
     #print(user.checkIfAdmin(session['name'])) # Test to see if user in session is admin
-    return render_template("resources.html", data=lst)
+    return render_template("resources.html", data=lst, username=session['name'])
 
 
 @app.route("/bookings")
@@ -94,7 +94,7 @@ def bookings():
         return redirect(url_for("login"))
     booking.deleteOldBookings()
     lst = booking.readBooking()
-    return render_template("bookings.html", data=lst)
+    return render_template("bookings.html", data=lst, username=session['name'])
 
 
 @app.route("/reservation", methods=['GET', 'POST'])
@@ -121,7 +121,7 @@ def reservation():
         booking.setResourceIDinBooking(resourceID, bookingID)
         return redirect(url_for("confirm"))
     lst = res.readResource()
-    return render_template("reservation.html", data=lst)
+    return render_template("reservation.html", data=lst, username=session['name'])
 
 
 @app.route("/about")
@@ -133,21 +133,21 @@ def about():
 def confirm():
     if "name" not in session:
         return redirect(url_for("login"))
-    return render_template("confirm.html")
+    return render_template("confirm.html", username=session['name'])
 
 
 @app.route("/welcome")
 def welcome():
     if "name" not in session:
         return redirect(url_for("login"))
-    return render_template("welcome.html")
+    return render_template("welcome.html", username=session['name'])
 
 
 @app.route("/denied")
 def denied():
     if "name" not in session:
         return redirect(url_for("login"))
-    return render_template("denied.html")
+    return render_template("denied.html", username=session['name'])
 
 
 @app.route("/deleteresource", methods=['GET', 'POST'])
@@ -167,7 +167,7 @@ def deleteresource():
     lst = res.readResource()
     print(lst)
     #print(user.checkIfAdmin(session['name'])) # Test to see if user in session is admin
-    return render_template("deleteresource.html", data=lst)
+    return render_template("deleteresource.html", data=lst, username=session['name'])
 
 
 @app.route("/deletebooking", methods=['GET', 'POST'])
@@ -190,7 +190,7 @@ def deletebooking():
             booking.deleteOldBookings()
             lst = booking.readBooking()
             
-        return render_template("deletebooking.html", data=lst)
+        return render_template("deletebooking.html", data=lst, username=session['name'])
     except TypeError as e:
         print(e)
         return render_template("deletebooking.html")
@@ -203,7 +203,7 @@ def updateuser():
     if user.checkIfAdmin(session['name']) == False:
         return redirect(url_for("denied"))
 
-    return render_template("updateuser.html")
+    return render_template("updateuser.html", username=session['name'])
 
 
 @app.route("/updateusername", methods=['GET', 'POST'])
@@ -227,7 +227,7 @@ def updateusername():
     except (TypeError, ValueError) as e:
         return e
 
-    return render_template("updateusername.html", data=lst)
+    return render_template("updateusername.html", data=lst, username=session['name'])
 
 
 @app.route("/updatepassword", methods=['GET', 'POST'])
@@ -256,7 +256,7 @@ def updatepassword():
                 flash("Error: Passwords didn't match")
     except (TypeError, ValueError) as e:
         return e
-    return render_template("updatepassword.html", data=lst)
+    return render_template("updatepassword.html", data=lst, username=session['name'])
 
 
 @app.route("/updateemail", methods=['GET', 'POST'])
@@ -279,7 +279,7 @@ def updateemail():
                 return redirect(url_for("welcome"))
     except (TypeError, ValueError) as e:
         return e
-    return render_template("updateemail.html", data=lst)
+    return render_template("updateemail.html", data=lst, username=session['name'])
 
 
 @app.route("/updateadminstatus", methods=['GET', 'POST'])
@@ -302,7 +302,7 @@ def updateadminstatus():
                 return redirect(url_for("welcome"))
     except (TypeError, ValueError) as e:
         return e
-    return render_template("updateadminstatus.html", data=lst)
+    return render_template("updateadminstatus.html", data=lst, username=session['name'])
 
 
 @app.route("/deleteuser", methods=['GET', 'POST'])
@@ -324,6 +324,7 @@ def deleteuser():
                 return redirect(url_for("welcome"))
     except (TypeError, ValueError) as e:
         return e
-    return render_template("deleteuser.html", data=lst)
+    return render_template("deleteuser.html", data=lst, username=session['name'])
+    
 if __name__ == "__main__":
     app.run()
