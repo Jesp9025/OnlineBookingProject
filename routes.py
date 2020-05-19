@@ -20,7 +20,7 @@ app.config['SECRET_KEY'] = '7d441f27d441f275asdasd6352567d441f2b6176a'
 
 @app.route("/")
 def index():
-    return redirect(url_for("mainpage"))
+    return render_template("presite.html")
 
 
 @app.route("/mainpage")
