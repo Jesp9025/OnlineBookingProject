@@ -1,6 +1,11 @@
 import os, sqlite3, datetime, functools, operator, random
 from werkzeug.security import generate_password_hash, check_password_hash
 
+
+'''Self Reflection: It might have been easier in the long run to create universal methods that could take whatever query as argument,
+    rather than having to create a lot of methods that does mostly 1 thing'''
+
+
 class Resource(object):
     resourceQuantity = int
     resourceManufactorer = str
@@ -12,10 +17,6 @@ class Resource(object):
         self.path = os.path.join(self.databaseLocation, self.databaseFile)
         self.conn = sqlite3.connect(self.path, check_same_thread=False)
 
-
-
-    '''This may or may not bite us in the ass, putting the Queries inside of the method and simply filling out the "holes",
-    instead of putting the whole Query inside a single argument'''
 
     def createResource(self, resourceQuantity, resourceManufacturer, resourceModel, resourceSerialNumber):
         """
@@ -29,7 +30,7 @@ class Resource(object):
             return True
         except sqlite3.Error as e:
             return "An error occurred:", e.args[0]
-        
+
 
     def readResource(self):
         """Reads everything in Resource table
@@ -39,6 +40,7 @@ class Resource(object):
         lst = c.fetchall()
         c.close()
         return lst
+
 
     def updateResource(self, column_name, new_value, where_column, value): # Not sure about the names yet
         """Updates Resource table with whatever is passed as arguments\n
@@ -67,10 +69,12 @@ class Resource(object):
         except sqlite3.Error as e:
             return "An error occurred:", e.args[0]
 
+
 class Booking(Resource):
     bookingID = int
     bookingStart = datetime
     isBooked = bool
+
 
     def createBooking(self, quantity, resourceID, bookingID):
         '''Creates a new booking. Checks if enough equipment is available
@@ -99,7 +103,6 @@ class Booking(Resource):
                     print(e)
                     return True
     
-    
 
     def readBooking(self):
         """Reads everything in Booking table
@@ -110,12 +113,14 @@ class Booking(Resource):
         c.close()
         return lst
 
+
     def readSpecificBooking(self, column_name, value):
         c = self.conn.cursor()
         c.execute("SELECT 'Booking ID:', booking_id, 'User:', booking_user_username, 'Booking Date:', booking_start, 'Resource ID:', booking_resource_id, 'Quantity:', booking_resource_quantity FROM Booking WHERE {} = '{}';".format(column_name, value))
         lst = c.fetchall()
         c.close()
         return lst
+
 
     def deleteOldBookings(self):
         '''Delete bookings that exceed 1 day and update resource quantity, in order words "return the equipment you reserved"
@@ -161,6 +166,7 @@ class Booking(Resource):
         except TypeError as e:
             return "An error occurred:", e.args[0]
 
+
     def updateBooking(self, column_name, new_value, where_column, value): # Not sure about the names yet
         """Update anything from Booking table\n
         Example: updateBooking("booking_start", "2020-05-17", "booking_id", "21235")
@@ -174,6 +180,7 @@ class Booking(Resource):
         except sqlite3.Error as e:
             return "An error occurred:", e.args[0]
 
+
     def setUsernameBooking(self, username, bookingID):
         '''Sets booking_user_username to whatever is passed as username argument
         '''
@@ -185,6 +192,7 @@ class Booking(Resource):
             return True
         except sqlite3.Error as e:
             return "An error occurred:", e.args[0]
+
 
     def setQuantityBooking(self, quantity, bookingID):
         '''Updates quantity in Booking to whatever is passed as quantity argument
@@ -198,6 +206,7 @@ class Booking(Resource):
         except sqlite3.Error as e:
             return "An error occurred:", e.args[0]
 
+
     def setResourceIDinBooking(self, resourceID, bookingID):
         '''Updates the booking_resource_id in Booking to whatever is passed as resourceID argument
         '''
@@ -209,6 +218,7 @@ class Booking(Resource):
             return True
         except sqlite3.Error as e:
             return "An error occurred:", e.args[0]
+
 
     def deleteBooking(self, column_name, value): # Not sure about the names yet
         """Deletes a booking and "returns" reserved equipment to resource_quantity\n
@@ -256,6 +266,7 @@ class Booking(Resource):
         except sqlite3.Error as e:
             return "An error occurred:", e.args[0]
 
+
     def deleteOwnBooking(self, column_name, value, username):
         '''Use this to delete booking for logged in user only\n
         In other words: This is for non-admins\n
@@ -302,8 +313,10 @@ class Booking(Resource):
         except sqlite3.Error as e:
             return "An error occurred:", e.args[0]
 
+
     def verifyAvailability(self):
         return True
+
 
 class User(Booking):
     userID = int
@@ -312,6 +325,7 @@ class User(Booking):
     __email = str
     userisAdmin = bool
     accountIsActive = bool
+
 
     def readUserEmail(self, username):
         '''Reads users email address and returns it
@@ -340,10 +354,10 @@ class User(Booking):
         except sqlite3.Error as e:
             return "An error occurred:", e.args[0]
 
- 
     def verifyUserActiveStatus(self):
         return True
     
+
     # Gotta convert from tuple to list, from list to str to check password
     def verifyLogin(self, username, password):
         '''Verifies the login by comparing password from database with input password
@@ -411,6 +425,7 @@ class User(Booking):
         lst = c.fetchall()
         c.close()
         return lst
+
 
     def updateUserAnything(self, param):
         try:

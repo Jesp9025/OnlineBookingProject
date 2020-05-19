@@ -10,22 +10,28 @@ res = Project.Resource()
 user = Project.User()
 booking = Project.Booking()
 
+
 # App config.
 DEBUG = False
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.config['SECRET_KEY'] = '7d441f27d441f275asdasd6352567d441f2b6176a'
 
+
 @app.route("/")
 def index():
     return redirect(url_for("mainpage"))
 
+
 @app.route("/mainpage")
 def mainpage():
     return render_template("mainpage.html")
+
+
 @app.route("/authors")
 def authors():
     return render_template("authors.html")
+
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
@@ -44,12 +50,14 @@ def login():
     else:
         return render_template('login.html')
 
+
 @app.route("/logout")
 def logout():
     if "name" not in session:
         return redirect(url_for("login"))
     session.pop("name", None)
     return redirect(url_for("login"))
+
 
 @app.route("/registration", methods=['GET', 'POST'])
 def registration():
@@ -68,6 +76,7 @@ def registration():
             return redirect(url_for("login"))
     return render_template('registration.html')
 
+
 @app.route("/resources")
 def resources():
     if "name" not in session:
@@ -78,6 +87,7 @@ def resources():
     #print(user.checkIfAdmin(session['name'])) # Test to see if user in session is admin
     return render_template("resources.html", data=lst)
 
+
 @app.route("/bookings")
 def bookings():
     if "name" not in session:
@@ -85,6 +95,7 @@ def bookings():
     booking.deleteOldBookings()
     lst = booking.readBooking()
     return render_template("bookings.html", data=lst)
+
 
 @app.route("/reservation", methods=['GET', 'POST'])
 def reservation():
@@ -112,27 +123,32 @@ def reservation():
     lst = res.readResource()
     return render_template("reservation.html", data=lst)
 
+
 @app.route("/about")
 def about():
     return render_template("about.html")
+
 
 @app.route("/confirm")
 def confirm():
     if "name" not in session:
         return redirect(url_for("login"))
     return render_template("confirm.html")
-    
+
+
 @app.route("/welcome")
 def welcome():
     if "name" not in session:
         return redirect(url_for("login"))
     return render_template("welcome.html")
 
+
 @app.route("/denied")
 def denied():
     if "name" not in session:
         return redirect(url_for("login"))
     return render_template("denied.html")
+
 
 @app.route("/deleteresource", methods=['GET', 'POST'])
 def deleteresource():
@@ -152,6 +168,7 @@ def deleteresource():
     print(lst)
     #print(user.checkIfAdmin(session['name'])) # Test to see if user in session is admin
     return render_template("deleteresource.html", data=lst)
+
 
 @app.route("/deletebooking", methods=['GET', 'POST'])
 def deletebooking():
@@ -178,6 +195,7 @@ def deletebooking():
         print(e)
         return render_template("deletebooking.html")
 
+
 @app.route("/updateuser")
 def updateuser():
     if "name" not in session:
@@ -186,6 +204,7 @@ def updateuser():
         return redirect(url_for("denied"))
 
     return render_template("updateuser.html")
+
 
 @app.route("/updateusername", methods=['GET', 'POST'])
 def updateusername():
@@ -209,6 +228,7 @@ def updateusername():
         return e
 
     return render_template("updateusername.html", data=lst)
+
 
 @app.route("/updatepassword", methods=['GET', 'POST'])
 def updatepassword():
@@ -238,6 +258,7 @@ def updatepassword():
         return e
     return render_template("updatepassword.html", data=lst)
 
+
 @app.route("/updateemail", methods=['GET', 'POST'])
 def updateemail():
     if "name" not in session:
@@ -260,6 +281,7 @@ def updateemail():
         return e
     return render_template("updateemail.html", data=lst)
 
+
 @app.route("/updateadminstatus", methods=['GET', 'POST'])
 def updateadminstatus():
     if "name" not in session:
@@ -281,6 +303,7 @@ def updateadminstatus():
     except (TypeError, ValueError) as e:
         return e
     return render_template("updateadminstatus.html", data=lst)
+
 
 @app.route("/deleteuser", methods=['GET', 'POST'])
 def deleteuser():
