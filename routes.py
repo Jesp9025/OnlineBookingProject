@@ -118,6 +118,8 @@ def reservation():
             resourceID=request.form['ID']
             quantity=request.form['quantity']
             bookingID = user.IDGenerator("booking_id", "Booking")
+            date=request.form['date']
+            print(date)
             
             try:
                 quantity = int(quantity)
