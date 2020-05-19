@@ -17,9 +17,12 @@ app.config.from_object(__name__)
 app.config['SECRET_KEY'] = '7d441f27d441f275asdasd6352567d441f2b6176a'
 
 @app.route("/")
+def index():
+    return redirect(url_for("mainpage"))
+
+@app.route("/mainpage")
 def mainpage():
     return render_template("mainpage.html")
-
 @app.route("/authors")
 def authors():
     return render_template("authors.html")
