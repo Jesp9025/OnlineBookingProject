@@ -73,6 +73,8 @@ def registration():
         email=email.lower()
         if email == "" or username == "" or password == "":
             flash("Error: You must fill out every form")
+        elif "@gmail.com" not in email:
+            flash("Error: You must use gmail!")
         else:
             try:
                 temp = user.readUserAnything("SELECT user_username FROM User")
