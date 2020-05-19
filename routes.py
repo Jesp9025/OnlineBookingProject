@@ -72,7 +72,6 @@ def registration():
             flash("Error: You must fill out every form")
         else:
             user.createUser(userID, username, password, email, False, True)
-            print(userID, username, password, email)
             return redirect(url_for("login"))
     return render_template('registration.html')
 
@@ -83,8 +82,6 @@ def resources():
         return redirect(url_for("login"))
     booking.deleteOldBookings()
     lst = res.readResource()
-    print(lst)
-    #print(user.checkIfAdmin(session['name'])) # Test to see if user in session is admin
     return render_template("resources.html", data=lst, username=session['name'])
 
 
@@ -101,26 +98,32 @@ def bookings():
 def reservation():
     if "name" not in session:
         return redirect(url_for("login"))
+    try:
+        if request.method == 'POST':
+            resourceID=request.form['ID']
+            quantity=request.form['quantity']
+            bookingID = user.IDGenerator("booking_id", "Booking")
+            
+            try:
+                quantity = int(quantity)
+            except (TypeError, ValueError) as e:
+                print(e)
+
+            if booking.createBooking(quantity, resourceID, bookingID): # If resources are not available
+                flash("Error: You can't reserve that many")
+                return redirect(url_for("reservation"))
+                
+            EmailConfirm.sendEmail(user.readUserEmail(session['name']), bookingID) # Sends an email to users email address
+            booking.setUsernameBooking(session['name'], bookingID)
+            booking.setQuantityBooking(quantity, bookingID)
+            booking.setResourceIDinBooking(resourceID, bookingID)
+            return redirect(url_for("confirm"))
+        lst = res.readResource()
+    except TypeError as e:
+        flash("Error: Something is not right")
+        print(e.args[0])
+        return redirect(url_for("reservation"))
     
-    if request.method == 'POST':
-        resourceID=request.form['ID']
-        quantity=request.form['quantity']
-        bookingID = user.IDGenerator("booking_id", "Booking")
-        print(bookingID)
-        
-        try:
-            quantity = int(quantity)
-        except (TypeError, ValueError) as e:
-            print(e)
-        print(quantity)
-        if booking.createBooking(quantity, resourceID, bookingID): # If resources are not available
-            return redirect(url_for("reservation"))
-        EmailConfirm.sendEmail(user.readUserEmail(session['name'])) # Sends an email to users email address
-        booking.setUsernameBooking(session['name'], bookingID)
-        booking.setQuantityBooking(quantity, bookingID)
-        booking.setResourceIDinBooking(resourceID, bookingID)
-        return redirect(url_for("confirm"))
-    lst = res.readResource()
     return render_template("reservation.html", data=lst, username=session['name'])
 
 
@@ -162,11 +165,9 @@ def deleteresource():
             resourceID=request.form['ID']
             res.deleteResource("resource_ID", resourceID)
 
-
     booking.deleteOldBookings()
     lst = res.readResource()
-    print(lst)
-    #print(user.checkIfAdmin(session['name'])) # Test to see if user in session is admin
+
     return render_template("deleteresource.html", data=lst, username=session['name'])
 
 
@@ -175,6 +176,8 @@ def deletebooking():
     if "name" not in session:
         return redirect(url_for("login"))
 
+    booking.deleteOldBookings()
+
     try:
         if request.method == 'POST':
             bookingID=request.form['ID']
@@ -182,18 +185,19 @@ def deletebooking():
                 booking.deleteBooking("booking_id", bookingID)
             else:
                 booking.deleteOwnBooking("booking_id", bookingID, session['name'])
-
+            flash("Success: Booking has been deleted")
+            return redirect(url_for("welcome"))
+            
         if user.checkIfAdmin(session['name']) == False:
-            booking.deleteOldBookings()
             lst = booking.readSpecificBooking("booking_user_username", session['name'])
         else:
-            booking.deleteOldBookings()
             lst = booking.readBooking()
-            
-        return render_template("deletebooking.html", data=lst, username=session['name'])
     except TypeError as e:
-        print(e)
-        return render_template("deletebooking.html")
+        flash("Error: You can't delete that")
+        print(e.args[0])
+        return redirect(url_for("deletebooking"))
+    
+    return render_template("deletebooking.html", data=lst, username=session['name'])
 
 
 @app.route("/updateuser")
@@ -325,6 +329,6 @@ def deleteuser():
     except (TypeError, ValueError) as e:
         return e
     return render_template("deleteuser.html", data=lst, username=session['name'])
-    
+
 if __name__ == "__main__":
     app.run()

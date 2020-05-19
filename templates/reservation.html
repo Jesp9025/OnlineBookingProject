@@ -50,3 +50,17 @@
    <input type="text" class="form-control" id="quantity" name="quantity">
    <button type="submit" class="btn btn-success">Confirm Booking</button>
    </form>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+
+{% for message in messages %}
+
+
+{% if "Error" in message[1]: %}
+<div class="alert alert-warning">
+                {{ message[1] }}</div>
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endwith %}
+</div>

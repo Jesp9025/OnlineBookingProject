@@ -1,4 +1,4 @@
-def sendEmail(email):
+def sendEmail(email, ID):
     import smtplib, ssl, functools, operator
     
     # Convert to string and remove symbols :O
@@ -7,7 +7,7 @@ def sendEmail(email):
     actualEmail = actualEmail.replace("'", "")
     actualEmail = actualEmail.replace(")", "")
     actualEmail = actualEmail.replace(",", "")
-    print(actualEmail)
+
     
     port = 465  # For SSL
     password = 'asdjj34j34jasjdajasdlakkl!"#"asdasdki'
@@ -16,9 +16,9 @@ def sendEmail(email):
     sender_email = "bookingprojectEaDania@gmail.com"
     receiver_email = actualEmail
     message = """\
-    Subject: Hi there
+    Booking Confirmed
 
-    Your booking has been confirmed."""
+    Your booking with ID: {} has been confirmed.""".format(ID)
 
     # Create a secure SSL context
     context = ssl.create_default_context()

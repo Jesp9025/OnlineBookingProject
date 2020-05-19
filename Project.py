@@ -333,7 +333,6 @@ class User(Booking):
         c = self.conn.cursor()
         c.execute("SELECT user_email FROM User WHERE user_username = '{}'".format(username))
         lst = c.fetchall()
-        print(lst)
         email = ""
         for i in lst:
             email += str(i)
@@ -430,11 +429,8 @@ class User(Booking):
     def updateUserAnything(self, param):
         try:
             c = self.conn.cursor()
-            print(3)
             c.execute(param)
-            print(4)
             self.conn.commit()
-            print(5)
             c.close()
             return True
         except sqlite3.Error as e:
