@@ -82,7 +82,7 @@
     <h2>Users</h2>
     <body>
        {%for value in data%}
-        <p>{{value | replace("(", "") | replace(")", "") | replace(":", "=") | replace("'", "") | replace("=,", ":")}}</p>
+        <p>{{value | replace("(", "") | replace(")", "") | replace(":", "=") | replace("'", "") | replace("=,", ":") | replace(",", "")}}</p>
        {%endfor%}
       </body>
       <!Reference: https://stackoverflow.com/questions/47442632/how-to-write-a-python-for-loop-in-an-html-file/47442724 -->

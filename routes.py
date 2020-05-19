@@ -71,7 +71,19 @@ def registration():
         if email == "" or username == "" or password == "":
             flash("Error: You must fill out every form")
         else:
+            try:
+                temp = user.readUserAnything("SELECT user_username FROM User")
+                temp = functools.reduce(operator.add, (temp))
+                for item in temp:
+                    print(item)
+                    if username == item:
+                        flash("Error: Username taken")
+                        return redirect(url_for("registration"))
+            except (ValueError, TypeError) as e:
+                print(e)
+                return redirect(url_for("registration"))
             user.createUser(userID, username, password, email, False, True)
+            flash("Success: New user created")
             return redirect(url_for("login"))
     return render_template('registration.html')
 
