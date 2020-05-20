@@ -14,3 +14,7 @@ Online booking system based on Flask, SQLite and Python
 <p>- Delete bookings (admins can delete everything, users can only delete own bookings</p>
 <p>- Delete Resources(admins only)</p>
 <p>- Update User: Username, password, email, admin status, delete user(admins only)</p>
+
+How to run:
+
+run routes.py
