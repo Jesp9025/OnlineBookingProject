@@ -5,6 +5,11 @@ import functools, operator # To convert tuple to list
 import EmailConfirm
 from werkzeug.security import generate_password_hash
 
+
+'''Self reflection: May or may not have been easier to use flask-login and similar modules
+'''
+
+
 # To get methods from classes
 res = Project.Resource()
 user = Project.User()
