@@ -79,29 +79,32 @@ class Booking(Resource):
     def createBooking(self, quantity, resourceID, bookingID):
         '''Creates a new booking. Checks if enough equipment is available
         '''
-        c = self.conn.cursor()
-        c.execute("SELECT resource_quantity FROM Resource WHERE resource_id = {}".format(resourceID))
-        lst = c.fetchall()
-        #c.close()
-        toList = functools.reduce(operator.add, (lst))
-        for item in toList:
-            if quantity > item:
-                print("No can do..")
-                return True
-            elif quantity <= 0:
-                print("No can do again")
-                return True
-            else:
-                bookingStart = datetime.date.today()
-                newValue = item - quantity
-                Booking.updateResource(self, "resource_quantity", newValue, "resource_id", resourceID)
-                try:
-                    c.execute("INSERT INTO Booking (booking_id, booking_start) VALUES ({}, '{}')".format(bookingID, bookingStart))
-                    self.conn.commit()
-                    c.close()
-                except sqlite3.IntegrityError as e:
-                    print(e)
+        try:
+            c = self.conn.cursor()
+            c.execute("SELECT resource_quantity FROM Resource WHERE resource_id = {}".format(resourceID))
+            lst = c.fetchall()
+            #c.close()
+            toList = functools.reduce(operator.add, (lst))
+            for item in toList:
+                if quantity > item:
+                    print("No can do..")
                     return True
+                elif quantity <= 0:
+                    print("No can do again")
+                    return True
+                else:
+                    bookingStart = datetime.date.today()
+                    newValue = item - quantity
+                    Booking.updateResource(self, "resource_quantity", newValue, "resource_id", resourceID)
+                    try:
+                        c.execute("INSERT INTO Booking (booking_id, booking_start) VALUES ({}, '{}')".format(bookingID, bookingStart))
+                        self.conn.commit()
+                        c.close()
+                    except sqlite3.IntegrityError as e:
+                        print(e)
+                        return True
+        except sqlite3.Error as e:
+            return "An error occurred:", e.args[0]
     
 
     def readBooking(self):
@@ -241,7 +244,7 @@ class Booking(Resource):
             # 1st for loop is to get first item in booking_resource_quantity
             # 2nd for loop is to get first item in booking_id
             # 3rd for loop is just to get quantity from resource itself. For loop is needed to convert list to string
-            # The reason for a nested for loop is to make sure that we get the correct "pair" that we want to modify or atleast use its values to modify something else
+            # The reason for a nested for loop is to make sure that we get the correct "pair" that we want to modify
             for i in listQuantity:
                 stringQuantity += str(i)
                 for k in listID:

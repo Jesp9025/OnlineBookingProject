@@ -176,16 +176,19 @@ def denied():
 def deleteresource():
     if "name" not in session:
         return redirect(url_for("login"))
-
     if user.checkIfAdmin(session['name']) == False:
         return redirect(url_for("denied"))
+    try:
+        if request.method == 'POST':
+                resourceID=request.form['ID']
+                res.deleteResource("resource_ID", resourceID)
 
-    if request.method == 'POST':
-            resourceID=request.form['ID']
-            res.deleteResource("resource_ID", resourceID)
-
-    booking.deleteOldBookings()
-    lst = res.readResource()
+        booking.deleteOldBookings()
+        lst = res.readResource()
+    except TypeError as e:
+        flash("Error: You can't delete that")
+        print(e.args[0])
+        return redirect(url_for("deleteresource"))
 
     return render_template("deleteresource.html", data=lst, username=session['name'])
 
