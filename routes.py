@@ -71,9 +71,8 @@ def registration():
         password=request.form['password']
         email=request.form['email']
         email=email.lower()
-        if email == "" or username == "" or password == "":
-            flash("Error: You must fill out every form")
-        elif "@gmail.com" not in email:
+        
+        if "@gmail.com" not in email:
             flash("Error: You must use gmail!")
         else:
             try:
@@ -244,12 +243,9 @@ def updateusername():
         if request.method == 'POST':
             currentUsername=request.form['name']
             newUsername=request.form['name2']
-            if currentUsername == "" or newUsername == "":
-                flash("Error: Fill out the forms")
-            else:
-                user.updateUserAnything("UPDATE User SET user_username = '{}' WHERE user_username = '{}'".format(newUsername, currentUsername))
-                flash("Success: Username has been updated")
-                return redirect(url_for("welcome"))
+            user.updateUserAnything("UPDATE User SET user_username = '{}' WHERE user_username = '{}'".format(newUsername, currentUsername))
+            flash("Success: Username has been updated")
+            return redirect(url_for("welcome"))
     except (TypeError, ValueError) as e:
         return e
 
@@ -271,13 +267,10 @@ def updatepassword():
             password2=request.form['password2']
 
             if password == password2:
-                if username == "" or password == "" or password2 == "":
-                    flash("Error: Fill out the forms")
-                else:
-                    newPassword = generate_password_hash(password)
-                    user.updateUserAnything("UPDATE User SET user_password = '{}' WHERE user_username = '{}'".format(newPassword, username))
-                    flash("Success: User password has been updated")
-                    return redirect(url_for("welcome"))
+                newPassword = generate_password_hash(password)
+                user.updateUserAnything("UPDATE User SET user_password = '{}' WHERE user_username = '{}'".format(newPassword, username))
+                flash("Success: User password has been updated")
+                return redirect(url_for("welcome"))
             else:
                 flash("Error: Passwords didn't match")
     except (TypeError, ValueError) as e:
@@ -297,12 +290,9 @@ def updateemail():
         if request.method == 'POST':
             username=request.form['name']
             email=request.form['email']
-            if username == "" or email == "":
-                flash("Error: Fill out the forms")
-            else:
-                user.updateUserAnything("UPDATE User SET user_email = '{}' WHERE user_username = '{}'".format(email, username))
-                flash("Success: User Email has been updated")
-                return redirect(url_for("welcome"))
+            user.updateUserAnything("UPDATE User SET user_email = '{}' WHERE user_username = '{}'".format(email, username))
+            flash("Success: User Email has been updated")
+            return redirect(url_for("welcome"))
     except (TypeError, ValueError) as e:
         return e
     return render_template("updateemail.html", data=lst, username=session['name'])
@@ -320,12 +310,9 @@ def updateadminstatus():
         if request.method == 'POST':
             username=request.form['name']
             admin=request.form['status']
-            if username == "":
-                flash("Error: Enter a username")
-            else:
-                user.updateUserAnything("UPDATE User SET user_is_admin = '{}' WHERE user_username = '{}'".format(admin, username))
-                flash("Success: User Admin Status has been updated")
-                return redirect(url_for("welcome"))
+            user.updateUserAnything("UPDATE User SET user_is_admin = '{}' WHERE user_username = '{}'".format(admin, username))
+            flash("Success: User Admin Status has been updated")
+            return redirect(url_for("welcome"))
     except (TypeError, ValueError) as e:
         return e
     return render_template("updateadminstatus.html", data=lst, username=session['name'])
@@ -342,12 +329,9 @@ def deleteuser():
     try:
         if request.method == 'POST':
             username=request.form['name']
-            if username == "":
-                flash("Error: Enter a username")
-            else:
-                user.updateUserAnything("DELETE FROM User WHERE user_username = '{}'".format(username))
-                flash("Success: User has been deleted")
-                return redirect(url_for("welcome"))
+            user.updateUserAnything("DELETE FROM User WHERE user_username = '{}'".format(username))
+            flash("Success: User has been deleted")
+            return redirect(url_for("welcome"))
     except (TypeError, ValueError) as e:
         return e
     return render_template("deleteuser.html", data=lst, username=session['name'])
@@ -364,12 +348,9 @@ def updateuseractivestatus():
         if request.method == 'POST':
             username=request.form['name']
             active=request.form['status']
-            if username == "":
-                flash("Error: Enter a username")
-            else:
-                user.updateUserAnything("UPDATE User SET user_account_is_active = '{}' WHERE user_username = '{}'".format(active, username))
-                flash("Success: User Active Status has been updated")
-                return redirect(url_for("welcome"))
+            user.updateUserAnything("UPDATE User SET user_account_is_active = '{}' WHERE user_username = '{}'".format(active, username))
+            flash("Success: User Active Status has been updated")
+            return redirect(url_for("welcome"))
     except (TypeError, ValueError) as e:
         return e
     return render_template("updateuseractivestatus.html", data=lst, username=session['name'])
