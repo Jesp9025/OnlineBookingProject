@@ -11,7 +11,7 @@ Online booking system based on Flask, SQLite and Python
 <p>- Unique ID generator for user and booking creation</p>
 <p>- View Resources & Bookings</p>
 <p>- Make reservation/booking on equipment. Simply input ID of resource and quantity. It will be reserved for 24 hours.</p>
-<p>- Delete bookings (admins can delete everything, users can only delete own bookings</p>
+<p>- Delete bookings (admins can delete everything, users can only delete own bookings)</p>
 <p>- Delete Resources(admins only)</p>
 <p>- Update User: Username, password, email, admin status, delete user(admins only)</p>
 
