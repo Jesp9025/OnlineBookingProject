@@ -16,5 +16,8 @@ Online booking system based on Flask, SQLite and Python
 <p>- Update User: Username, password, email, admin status, delete user(admins only)</p>
 
 <h2>How to run:</h2>
+<p>Not possible to book "into the future"</p>
+<p>Meaning, when you create a booking, items/equipment is booked instantly for 1 day 
 
+<h2>How to run:</h2>
 <p>- run routes.py</p>
