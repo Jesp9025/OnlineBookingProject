@@ -4,28 +4,7 @@
 <link rel="stylesheet" href="../static/theme.css">
 <link rel="icon" type="image/png" href="../static/favicon.ico">
 <link rel="stylesheet" type="text/css" href="../static/barstyle.css" title="style"/>
-<style>
-   .alert {
-     padding: 20px;
-     background-color: #13a30e;
-     color: white;
-   }
-   
-   .closebtn {
-     margin-left: 15px;
-     color: white;
-     font-weight: bold;
-     float: right;
-     font-size: 22px;
-     line-height: 20px;
-     cursor: pointer;
-     transition: 0.3s;
-   }
-   
-   .closebtn:hover {
-     color: black;
-   }
-   </style>
+
 </head>
 <body>
 <div class="navbar">
@@ -62,17 +41,4 @@
    <input type="text" class="form-control" id="bug" name="bug" required>
    <button type="submit" class="btn btn-success">Submit bug</button>
    </form>
-{% with messages = get_flashed_messages(with_categories=true) %}
-{% if messages %}
-
-{% for message in messages %}
-
-
-{% if "Error" in message[1]: %}
-<div class="alert alert-warning">
-                {{ message[1] }}</div>
-{% endif %}
-{% endfor %}
-{% endif %}
-{% endwith %}
 </div>
