@@ -41,14 +41,15 @@ def authors():
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        name=request.form['name']
+        name=request.form['Username']
         name=name.lower()
         password=request.form['password']
         
-        if user.verifyUserActiveStatus(name) == False:
-            flash("Error: Your account has been deactivated by an admin")
         if user.verifyLogin(name, password):
-            session['name'] = name
+            if user.verifyUserActiveStatus(name) == False:
+                flash("Error: Your account has been deactivated by an admin")
+            else:
+                session['name'] = name
         else:
             flash('Error: Wrong username or password')
     if "name" in session:
