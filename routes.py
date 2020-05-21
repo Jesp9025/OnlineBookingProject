@@ -1,6 +1,5 @@
 from flask import Flask, render_template, flash, request, redirect, session, url_for
 import Project
-import os
 import functools, operator # To convert tuple to list
 import EmailConfirm
 from werkzeug.security import generate_password_hash
