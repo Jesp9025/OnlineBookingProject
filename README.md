@@ -20,4 +20,4 @@ Online booking system based on Flask, SQLite and Python
 <p>Meaning, when you create a booking, items/equipment is booked instantly for 1 day</p>
 
 <h2>How to run locally:</h2>
-<p>- run routes.py</p>
+<p>- Run routes.py</p>
