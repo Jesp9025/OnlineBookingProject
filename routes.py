@@ -408,5 +408,31 @@ def updateuseractivestatus():
         return e
     return render_template("updateuseractivestatus.html", data=lst, username=session['name'])
 
+@app.route("/logs")
+def logs():
+    if "name" not in session:
+        return redirect(url_for("login"))
+    if user.checkIfAdmin(session['name']) == False:
+        return redirect(url_for("denied"))
+    return render_template("logs.html", username=session['name'])
+
+@app.route("/userdatalog")
+def userdatalog():
+    if "name" not in session:
+        return redirect(url_for("login"))
+    if user.checkIfAdmin(session['name']) == False:
+        return redirect(url_for("denied"))
+    lst = updateUserData.readUserDataLog()
+    return render_template("userdatalog.html", data=lst, username=session['name'])
+
+@app.route("/bookingdatalog")
+def bookingdatalog():
+    if "name" not in session:
+        return redirect(url_for("login"))
+    if user.checkIfAdmin(session['name']) == False:
+        return redirect(url_for("denied"))
+    lst = bookingData.readBookingData()
+    return render_template("bookingdatalog.html", data=lst, username=session['name'])
+
 if __name__ == "__main__":
     app.run()

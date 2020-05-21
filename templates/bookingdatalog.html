@@ -29,35 +29,16 @@
 </div>
 </body>
 <p>Logged in as: {{ username }}</p>
-<h1>Delete Booking</h1>
+<h1>Logs</h1>
 <div class="container">
-    <h2>Bookings</h2>
-    <body>
-       {%for value in data%}
-        <p>{{value | replace("(", "") | replace(")", "") | replace(":", "=") | replace("'", "") | replace("=,", ":")}}</p>
-       {%endfor%}
-      </body>
-      <!Reference: https://stackoverflow.com/questions/47442632/how-to-write-a-python-for-loop-in-an-html-file/47442724 -->
+    <div class="navbar">
+        <a href="userdatalog">User Update Log</a>
+        <a href="bookingdatalog">Booking Data Log</a>
+    </div>
+    <h1>Booking Data Log</h1>
 </div>
-<div class="container">
-    <form action="" method="post" role="form">
-    <label for="ID">Booking ID:</label>
-    <input type="text" class="form-control" id="ID" name="ID" required>
-    <button type="submit" class="btn btn-success">Confirm</button>
-    </form>
-</div>
-<p>  </p>
-{% with messages = get_flashed_messages(with_categories=true) %}
-{% if messages %}
-
-{% for message in messages %}
-
-
-{% if "Error" in message[1]: %}
-<div class="alert">
-   <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
-   <strong>Error!</strong> {{ message[1] | replace("Error:", "")}}
-{% endif %}
-{% endfor %}
-{% endif %}
-{% endwith %}
+<body>
+    {%for value in data%}
+     <p>{{value | replace("(", "") | replace(")", "") | replace(":", "=") | replace("'", "") | replace("=,", ":")}}</p>
+    {%endfor%}
+   </body>

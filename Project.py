@@ -336,6 +336,16 @@ class BookingData(Booking):
         except sqlite3.Error as e:
             return "An error occurred:", e.args[0]
 
+    def readBookingData(self):
+        try:
+            c = self.conn.cursor()
+            c.execute("SELECT 'Booking ID:', bookingdata_booking_id, 'Username:', bookingdata_username, 'Resource ID:', bookingdata_resource_id, 'Quantity:', bookingdata_resource_quantity, 'Date:', bookingdata_start, 'Time:', bookingdata_time FROM BookingData")
+            lst = c.fetchall()
+            c.close
+            return lst
+        except sqlite3.Error as e:
+            return "An error occurred:", e.args[0]
+
 
 class User(Booking):
     userID = int
@@ -494,3 +504,12 @@ class UpdateUserData(User):
         except sqlite3.Error as e:
             return "An error occurred:", e.args[0]
             
+    def readUserDataLog(self):
+        try:
+            c = self.conn.cursor()
+            c.execute("SELECT 'Admin:', updateuserdata_admin, 'Affected Username:', updateuserdata_affected_user, 'What Changed:', updateuserdata_what_changed, 'Date:', updateuserdata_date, 'Time:', updateuserdata_time FROM UpdateUserData")
+            lst = c.fetchall()
+            c.close
+            return lst
+        except sqlite3.Error as e:
+            return "An error occurred:", e.args[0]
