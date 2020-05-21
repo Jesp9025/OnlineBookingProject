@@ -2,6 +2,7 @@
         	 	<link rel="stylesheet" media="screen" href="static/bootstrap.min.css">
                  <link rel="stylesheet" href="static/bootstrap-theme.min.css">
                  <link rel="icon" type="image/png" href="../static/favicon.ico">
+                 <link rel="stylesheet" type="text/css" href="../static/errorstyle.css" title="style"/>
        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <form action="/login">
     <input type="submit" value="Back to Login" />
@@ -15,7 +16,8 @@
 <input type="text" class="form-control" id="username" name="username" required>
 <label for="password">Password:</label>
 <input type="password" class="form-control" id="password" name="password" required>
-<button type="submit" class="btn btn-success">Register</button>
+<p>  </p>
+<button type="submit" class="btn btn-success">Create Account</button>
 </form>
 <p>  </p>
 {% with messages = get_flashed_messages(with_categories=true) %}

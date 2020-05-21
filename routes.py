@@ -51,6 +51,7 @@ def login():
                 flash("Error: Your account has been deactivated by an admin")
             else:
                 session['name'] = name
+                return redirect(url_for("welcome"))
         else:
             flash('Error: Wrong username or password')
     if "name" in session:
@@ -69,6 +70,10 @@ def logout():
 
 @app.route("/registration", methods=['GET', 'POST'])
 def registration():
+    if "ip" in session:
+            flash("Error: Must wait before creating more accounts")
+            return redirect(url_for("login"))
+
     if request.method == 'POST':
         userID = user.IDGenerator("user_id", "User")
         username=request.form['username']
@@ -76,6 +81,7 @@ def registration():
         password=request.form['password']
         email=request.form['email']
         email=email.lower()
+        ip = request.environ['REMOTE_ADDR']
         
         if "@gmail.com" not in email:
             flash("Error: You must use gmail!")
@@ -86,14 +92,22 @@ def registration():
                 for item in temp:
                     print(item)
                     if username == item:
-                        flash("Error: Username taken")
+                        flash("Error: Username already taken")
                         return redirect(url_for("registration"))
+                temp = user.readUserAnything("SELECT user_email FROM User")
+                temp = functools.reduce(operator.add, (temp))
+                for item in temp:
+                    print(item)
+                    if email == item:
+                        flash("Error: Email already taken")
+                        return redirect(url_for("registration"))
+                session['ip'] = ip
+                user.createUser(userID, username, password, email, False, True)
+                flash("Success: New user created")
+                return redirect(url_for("login"))
             except (ValueError, TypeError) as e:
                 print(e)
                 return redirect(url_for("registration"))
-            user.createUser(userID, username, password, email, False, True)
-            flash("Success: New user created")
-            return redirect(url_for("login"))
     return render_template('registration.html')
 
 @app.route("/bugsubmit", methods=['GET', 'POST'])
