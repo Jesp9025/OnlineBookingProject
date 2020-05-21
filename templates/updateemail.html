@@ -1,87 +1,47 @@
-<title>Update Email</title>
-        	 	<link rel="stylesheet" media="screen" href="static/bootstrap.min.css">
-               <link rel="stylesheet" href="static/bootstrap-theme.min.css">
-               <link rel="icon" type="image/png" href="../static/favicon.ico">
-       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-       <style>
-        .alert {
-          padding: 20px;
-          background-color: #f44336;
-          color: white;
-        }
-        
-        .closebtn {
-          margin-left: 15px;
-          color: white;
-          font-weight: bold;
-          float: right;
-          font-size: 22px;
-          line-height: 20px;
-          cursor: pointer;
-          transition: 0.3s;
-        }
-        
-        .closebtn:hover {
-          color: black;
-        }
-        </style>
-
-       <div class="btn-group">
-        <form action="/logout">
-           <input type="submit" value="Logout" />
-        </form>
-        <form action="/mainpage">
-           <input type="submit" value="Main Page" />
-        </form>
-        <form action="/welcome">
-           <input type="submit" value="Front Page" />
-        </form>
-        <form action="/resources">
-           <input type="submit" value="Resources" />
-        </form>
-        <form action="/bookings">
-           <input type="submit" value="Bookings" />
-        </form>
-        <form action="/reservation">
-           <input type="submit" value="Make Reservation" />
-        </form>
-        <form action="/deletebooking">
-         <input type="submit" value="Delete Booking" />
-         </form>
-         <form action="/deleteresource">
-             <input type="submit" value="Delete Resource" />
-         </form>
-         <form action="/updateuser">
-           <input type="submit" value="Update User" />
-       </form>
-     </div>
-     <p>User logged in: {{ username }}</p>
-<h1>Update Email</h1>
+<!DOCTYPE html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../static/theme.css">
+<link rel="icon" type="image/png" href="../static/favicon.ico">
+<link rel="stylesheet" type="text/css" href="../static/barstyle.css" title="style"/>
+<link rel="stylesheet" type="text/css" href="../static/errorstyle.css" title="style"/>
+</head>
+<body>
+<div class="navbar">
+  <div class="dropdown">
+    <button class="dropbtn">Menu 
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+      <a href="logout">Logout</a>
+      <a href="bugsubmit">Submit a bug</a>
+      <a href="mainpage">Mainpage</a>
+      <a href="welcome">Frontpage</a>
+      <a href="resources">Resources</a>
+      <a href="bookings">Bookings</a>
+      <a href="reservation">Create Reservation</a>
+      <a href="deletebooking">Delete Booking</a>
+      <a href="deleteresource">Delete Resource</a>
+      <a href="updateuser">Update User</a>
+    </div>
+  </div> 
+</div>
+</body>
+<p>Logged in as: {{ username }}</p>
+<h1>Update User</h1>
 <div class="container">
     <h1>What do you want to update?</h1>
-<div class="btn-group">
-    <form action="/updateusername">
-        <input type="submit" value="Username" />
-    </form>
-    <form action="/updatepassword">
-        <input type="submit" value="Password" />
-    </form>
-    <form action="/updateemail">
-        <input type="submit" value="Email" />
-    </form>
-    <form action="/updateadminstatus">
-        <input type="submit" value="Admin Status" />
-    </form>
-    <form action="/deleteuser">
-        <input type="submit" value="Delete User" />
-    </form>
-    <form action="/updateuseractivestatus">
-        <input type="submit" value="Activate/Deactivate User" />
-    </form>
+<div class="navbar">
+    <a href="updateusername">Username</a>
+    <a href="updatepassword">Password</a>
+    <a href="updateemail">Email</a>
+    <a href="updateadminstatus">Admin Status</a>
+    <a href="deleteuser">Delete User</a>
+    <a href="updateuseractivestatus">Activate/Deactivate User</a>
 </div>
 </div>
 <div class="container">
+    <h1>Update Email</h1>
     <h2>Users</h2>
     <body>
        {%for value in data%}
@@ -99,11 +59,8 @@
     <input type="email" class="form-control" id="email" name="email" required>
     <button type="submit" class="btn btn-success">Confirm</button>
     </form>
-    <div class="alert">
-        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
-        <strong>Warning!</strong> There is no going back once you click Confirm!
-      </div>
 </div>
+<p>  </p>
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
 
@@ -111,8 +68,9 @@
 
 
 {% if "Error" in message[1]: %}
-<div class="alert alert-warning">
-                {{ message[1] }}</div>
+<div class="alert">
+    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+    <strong>Error!</strong> {{ message[1] | replace("Error:", "")}}
 {% endif %}
 {% endfor %}
 {% endif %}

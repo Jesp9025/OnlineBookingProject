@@ -42,7 +42,7 @@ class Resource(object):
         return lst
 
 
-    def updateResource(self, column_name, new_value, where_column, value): # Not sure about the names yet
+    def updateResource(self, column_name, new_value, where_column, value):
         """Updates Resource table with whatever is passed as arguments\n
         Example: updateResource("resource_Quantity", "30", "resource_Model", "3570")
         """
@@ -56,16 +56,22 @@ class Resource(object):
             return "An error occurred:", e.args[0]
 
 
-    def deleteResource(self, column_name, value): # Not sure about the names yet
-        """Delete everything from Resource table where column_name == value\n
+    def deleteResource(self, column_name, value):
+        """Delete everything from Resource table where column_name == value and checks if the column name value exists in database\n
         Example: deleteResource("resource_model", "DX850")
         """
         try:
             c = self.conn.cursor()
-            c.execute("DELETE FROM Resource WHERE {} = '{}'".format(column_name, value))
-            self.conn.commit()
-            c.close()
-            return True
+            c.execute("SELECT {} FROM Resource WHERE {} = {}".format(column_name, column_name, value))
+            lst = c.fetchall()
+            if lst == []:
+                c.close()
+                return False
+            else:
+                c.execute("DELETE FROM Resource WHERE {} = '{}'".format(column_name, value))
+                self.conn.commit()
+                c.close()
+                return True
         except sqlite3.Error as e:
             return "An error occurred:", e.args[0]
 
@@ -427,6 +433,19 @@ class User(Booking):
         lst = c.fetchall()
         c.close()
         return lst
+
+    def checkUserExist(self, username):
+        '''Returns True if username is in database
+        else returns False
+        '''
+        c = self.conn.cursor()
+        c.execute("SELECT user_username FROM User WHERE user_username = '{}'".format(username))
+        lst = c.fetchall()
+        c.close()
+        if lst == []:
+            return False
+        else:
+            return True
 
 
     def readUserAnything(self, param):

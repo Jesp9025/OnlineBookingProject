@@ -5,7 +5,7 @@
 <link rel="icon" type="image/png" href="../static/favicon.ico">
 <link rel="stylesheet" type="text/css" href="../static/barstyle.css" title="style"/>
 <style>
-   .alert2 {
+   .alert {
      padding: 20px;
      background-color: #13a30e;
      color: white;
@@ -47,29 +47,32 @@
     </div>
   </div> 
 </div>
-<p>Logged in as: {{ username }}</p>
-<h3>Welcome to our Booking System Project</h3>
-<p>Hover over the "Menu" link to see your options.</p>
-</body>
-<p>  </p>
+      <p>Logged in as: {{ username }}</p>
+<h1>Bug Submit</h1>
+<div class="container">
+   <body>
+     {%for value in data%}
+      <p>{{value | replace("(", "") | replace(")", "") | replace(":", "=") | replace("'", "") | replace("=,", ":")}}</p>
+     {%endfor%}
+    </body>
+    <!Reference: https://stackoverflow.com/questions/47442632/how-to-write-a-python-for-loop-in-an-html-file/47442724 -->
+<div class="container">
+   <form action="" method="post" role="form">
+   <label for="bug">What bug did you find?</label>
+   <input type="text" class="form-control" id="bug" name="bug" required>
+   <button type="submit" class="btn btn-success">Submit bug</button>
+   </form>
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
 
 {% for message in messages %}
 
 
-{% if "Success" in message[1]: %}
-<div class="alert2">
-   <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
-   <strong>Success!</strong> {{ message[1] | replace("Success:", "")}}
- </div>
-{% endif %}
 {% if "Error" in message[1]: %}
-<div class="alert">
-   <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
-   <strong>Error!</strong> {{ message[1] | replace("Error:", "")}}
- </div>
+<div class="alert alert-warning">
+                {{ message[1] }}</div>
 {% endif %}
 {% endfor %}
 {% endif %}
 {% endwith %}
+</div>

@@ -47,10 +47,8 @@ def login():
         
         if user.verifyUserActiveStatus(name) == False:
             flash("Error: Your account has been deactivated by an admin")
-            return redirect(url_for("login"))
         if user.verifyLogin(name, password):
             session['name'] = name
-            return redirect(url_for("welcome"))
         else:
             flash('Error: Wrong username or password')
     if "name" in session:
@@ -96,7 +94,18 @@ def registration():
             return redirect(url_for("login"))
     return render_template('registration.html')
 
+@app.route("/bugsubmit", methods=['GET', 'POST'])
+def bugsubmit():
+    if "name" not in session:
+        return redirect(url_for("login"))
 
+    if request.method=="POST":
+        bug=request.form['bug']
+        EmailConfirm.sendEmailBugSubmit(session['name'], bug)
+        flash("Success: Bug has been submitted. Thank you.")
+        return redirect(url_for("welcome"))
+
+    return render_template("bugsubmit.html", username=session['name'])
 @app.route("/resources")
 def resources():
     if "name" not in session:
@@ -136,17 +145,17 @@ def reservation():
                 flash("Error: You can't reserve that many")
                 return redirect(url_for("reservation"))
                 
-            EmailConfirm.sendEmail(user.readUserEmail(session['name']), bookingID) # Sends an email to users email address
+            EmailConfirm.sendEmailConfirm(user.readUserEmail(session['name']), bookingID) # Sends an email to users email address
             booking.setUsernameBooking(session['name'], bookingID)
             booking.setQuantityBooking(quantity, bookingID)
             booking.setResourceIDinBooking(resourceID, bookingID)
-            return redirect(url_for("confirm"))
+            flash("Success: Booking confirmed. An email has been sent to registered email address.")
+            return redirect(url_for("welcome"))
         lst = res.readResource()
     except TypeError as e:
-        flash("Error: Something is not right")
+        flash("Error: Something is not right. Did you input a resource ID that doesn't exist?")
         print(e.args[0])
-        return redirect(url_for("reservation"))
-    
+        lst = res.readResource()
     return render_template("reservation.html", data=lst, username=session['name'])
 
 
@@ -185,14 +194,17 @@ def deleteresource():
     try:
         if request.method == 'POST':
                 resourceID=request.form['ID']
-                res.deleteResource("resource_ID", resourceID)
+                if res.deleteResource("resource_ID", resourceID): # If resource id exists in database
+                    flash("Success: Resource has been deleted")
+                    return redirect(url_for("welcome"))
+                else: # If resource doesnt exist in database
+                    flash("Error: You can't delete that")
 
         booking.deleteOldBookings()
         lst = res.readResource()
     except TypeError as e:
         flash("Error: You can't delete that")
         print(e.args[0])
-        return redirect(url_for("deleteresource"))
 
     return render_template("deleteresource.html", data=lst, username=session['name'])
 
@@ -221,7 +233,7 @@ def deletebooking():
     except TypeError as e:
         flash("Error: You can't delete that")
         print(e.args[0])
-        return redirect(url_for("deletebooking"))
+        lst = booking.readBooking()
     
     return render_template("deletebooking.html", data=lst, username=session['name'])
 
@@ -248,9 +260,17 @@ def updateusername():
         if request.method == 'POST':
             currentUsername=request.form['name']
             newUsername=request.form['name2']
-            user.updateUserAnything("UPDATE User SET user_username = '{}' WHERE user_username = '{}'".format(newUsername, currentUsername))
-            flash("Success: Username has been updated")
-            return redirect(url_for("welcome"))
+
+            # Check if current username & new username exists in database
+            if user.checkUserExist(currentUsername):
+                if user.checkUserExist(newUsername) == False:
+                    user.updateUserAnything("UPDATE User SET user_username = '{}' WHERE user_username = '{}'".format(newUsername, currentUsername))
+                    flash("Success: Username has been updated")
+                    return redirect(url_for("welcome"))
+                else:
+                    flash("Error: New username already exists in database")
+            else:
+                flash("Error: Couldn't find current username in database")
     except (TypeError, ValueError) as e:
         return e
 
@@ -271,13 +291,16 @@ def updatepassword():
             password=request.form['password']
             password2=request.form['password2']
 
-            if password == password2:
-                newPassword = generate_password_hash(password)
-                user.updateUserAnything("UPDATE User SET user_password = '{}' WHERE user_username = '{}'".format(newPassword, username))
-                flash("Success: User password has been updated")
-                return redirect(url_for("welcome"))
+            if user.checkUserExist(username):
+                if password == password2:
+                    newPassword = generate_password_hash(password)
+                    user.updateUserAnything("UPDATE User SET user_password = '{}' WHERE user_username = '{}'".format(newPassword, username))
+                    flash("Success: User password has been updated")
+                    return redirect(url_for("welcome"))
+                else:
+                    flash("Error: Passwords didn't match")
             else:
-                flash("Error: Passwords didn't match")
+                flash("Error: Couldn't find username in database")
     except (TypeError, ValueError) as e:
         return e
     return render_template("updatepassword.html", data=lst, username=session['name'])
@@ -295,9 +318,13 @@ def updateemail():
         if request.method == 'POST':
             username=request.form['name']
             email=request.form['email']
-            user.updateUserAnything("UPDATE User SET user_email = '{}' WHERE user_username = '{}'".format(email, username))
-            flash("Success: User Email has been updated")
-            return redirect(url_for("welcome"))
+
+            if user.checkUserExist(username):
+                user.updateUserAnything("UPDATE User SET user_email = '{}' WHERE user_username = '{}'".format(email, username))
+                flash("Success: User Email has been updated")
+                return redirect(url_for("welcome"))
+            else:
+                flash("Error: Couldn't find username in database")
     except (TypeError, ValueError) as e:
         return e
     return render_template("updateemail.html", data=lst, username=session['name'])
@@ -315,9 +342,13 @@ def updateadminstatus():
         if request.method == 'POST':
             username=request.form['name']
             admin=request.form['status']
-            user.updateUserAnything("UPDATE User SET user_is_admin = '{}' WHERE user_username = '{}'".format(admin, username))
-            flash("Success: User Admin Status has been updated")
-            return redirect(url_for("welcome"))
+
+            if user.checkUserExist(username):
+                user.updateUserAnything("UPDATE User SET user_is_admin = '{}' WHERE user_username = '{}'".format(admin, username))
+                flash("Success: User Admin Status has been updated")
+                return redirect(url_for("welcome"))
+            else:
+                flash("Error: Couldn't find username in database")
     except (TypeError, ValueError) as e:
         return e
     return render_template("updateadminstatus.html", data=lst, username=session['name'])
@@ -334,9 +365,13 @@ def deleteuser():
     try:
         if request.method == 'POST':
             username=request.form['name']
-            user.updateUserAnything("DELETE FROM User WHERE user_username = '{}'".format(username))
-            flash("Success: User has been deleted")
-            return redirect(url_for("welcome"))
+
+            if user.checkUserExist(username):
+                user.updateUserAnything("DELETE FROM User WHERE user_username = '{}'".format(username))
+                flash("Success: User has been deleted")
+                return redirect(url_for("welcome"))
+            else:
+                flash("Error: Couldn't find username in database")
     except (TypeError, ValueError) as e:
         return e
     return render_template("deleteuser.html", data=lst, username=session['name'])
@@ -353,9 +388,13 @@ def updateuseractivestatus():
         if request.method == 'POST':
             username=request.form['name']
             active=request.form['status']
-            user.updateUserAnything("UPDATE User SET user_account_is_active = '{}' WHERE user_username = '{}'".format(active, username))
-            flash("Success: User Active Status has been updated")
-            return redirect(url_for("welcome"))
+
+            if user.checkUserExist(username):
+                user.updateUserAnything("UPDATE User SET user_account_is_active = '{}' WHERE user_username = '{}'".format(active, username))
+                flash("Success: User Active Status has been updated")
+                return redirect(url_for("welcome"))
+            else:
+                flash(" Error: Couldn't find username in database")
     except (TypeError, ValueError) as e:
         return e
     return render_template("updateuseractivestatus.html", data=lst, username=session['name'])

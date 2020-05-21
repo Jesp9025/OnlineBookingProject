@@ -1,38 +1,33 @@
-<title>Delete Booking</title>
-        	 	<link rel="stylesheet" media="screen" href="static/bootstrap.min.css">
-               <link rel="stylesheet" href="static/bootstrap-theme.min.css">
-               <link rel="icon" type="image/png" href="../static/favicon.ico">
-       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-       <div class="btn-group">
-         <form action="/logout">
-            <input type="submit" value="Logout" />
-         </form>
-         <form action="/mainpage">
-            <input type="submit" value="Main Page" />
-         </form>
-         <form action="/welcome">
-            <input type="submit" value="Front Page" />
-         </form>
-         <form action="/resources">
-            <input type="submit" value="Resources" />
-         </form>
-         <form action="/bookings">
-            <input type="submit" value="Bookings" />
-         </form>
-         <form action="/reservation">
-            <input type="submit" value="Make Reservation" />
-         </form>
-         <form action="/deletebooking">
-          <input type="submit" value="Delete Booking" />
-          </form>
-          <form action="/deleteresource">
-              <input type="submit" value="Delete Resource" />
-          </form>
-          <form action="/updateuser">
-            <input type="submit" value="Update User" />
-        </form>
-      </div>
-      <p>User logged in: {{ username }}</p>
+<!DOCTYPE html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="../static/theme.css">
+<link rel="icon" type="image/png" href="../static/favicon.ico">
+<link rel="stylesheet" type="text/css" href="../static/barstyle.css" title="style"/>
+<link rel="stylesheet" type="text/css" href="../static/errorstyle.css" title="style"/>
+</head>
+<body>
+<div class="navbar">
+  <div class="dropdown">
+    <button class="dropbtn">Menu 
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+      <a href="logout">Logout</a>
+      <a href="bugsubmit">Submit a bug</a>
+      <a href="mainpage">Mainpage</a>
+      <a href="welcome">Frontpage</a>
+      <a href="resources">Resources</a>
+      <a href="bookings">Bookings</a>
+      <a href="reservation">Create Reservation</a>
+      <a href="deletebooking">Delete Booking</a>
+      <a href="deleteresource">Delete Resource</a>
+      <a href="updateuser">Update User</a>
+    </div>
+  </div> 
+</div>
+</body>
+<p>Logged in as: {{ username }}</p>
 <h1>Delete Booking</h1>
 <div class="container">
     <h2>Bookings</h2>
@@ -50,6 +45,7 @@
     <button type="submit" class="btn btn-success">Confirm</button>
     </form>
 </div>
+<p>  </p>
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
 
@@ -57,8 +53,9 @@
 
 
 {% if "Error" in message[1]: %}
-<div class="alert alert-warning">
-                {{ message[1] }}</div>
+<div class="alert">
+   <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+   <strong>Error!</strong> {{ message[1] | replace("Error:", "")}}
 {% endif %}
 {% endfor %}
 {% endif %}

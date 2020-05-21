@@ -1,6 +1,7 @@
 <title>Login</title>
         	 	<link rel="stylesheet" media="screen" href="static/bootstrap.min.css">
                      <link rel="stylesheet" href="static/bootstrap-theme.min.css">
+                     <link rel="stylesheet" href="../static/theme.css">
                      <link rel="icon" type="image/png" href="../static/favicon.ico">
        <meta name="viewport" content="width=device-width, initial-scale=1.0">
        <form action="/mainpage">
@@ -14,6 +15,7 @@
 
 <label for="password">Password:</label>
 <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+<p>  </p>
 <button type="submit" class="btn btn-success">Log In</button>
 </form>
 <div class="btn-group"></div>
@@ -25,7 +27,7 @@
 </div>
 </form>
 </div>
-
+<p>  </p>
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
 
@@ -33,8 +35,9 @@
 
 
 {% if "Error" in message[1]: %}
-<div class="alert alert-warning">
-                {{ message[1] }}</div>
+<div class="alert">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+      <strong>Error!</strong> {{ message[1] | replace("Error:", "")}}
 {% endif %}
 {% endfor %}
 {% endif %}
@@ -47,8 +50,9 @@
 
 
 {% if "Success" in message[1]: %}
-<div class="alert alert-warning">
-                {{ message[1] }}</div>
+<div class="alert">
+      <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+      <strong>Error!</strong> {{ message[1] | replace("Error:", "")}}
 {% endif %}
 {% endfor %}
 {% endif %}
