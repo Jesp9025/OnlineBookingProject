@@ -13,6 +13,7 @@ from werkzeug.security import generate_password_hash
 res = Project.Resource()
 user = Project.User()
 booking = Project.Booking()
+bookingData = Project.BookingData()
 
 
 # App config.
@@ -133,8 +134,8 @@ def reservation():
             resourceID=request.form['ID']
             quantity=request.form['quantity']
             bookingID = user.IDGenerator("booking_id", "Booking")
-            date=request.form['date']
-            print(date)
+            #date=request.form['date']
+
             
             try:
                 quantity = int(quantity)
@@ -149,6 +150,7 @@ def reservation():
             booking.setUsernameBooking(session['name'], bookingID)
             booking.setQuantityBooking(quantity, bookingID)
             booking.setResourceIDinBooking(resourceID, bookingID)
+            bookingData.createBookingData(bookingID, session['name'], resourceID, quantity)
             flash("Success: Booking confirmed. An email has been sent to registered email address.")
             return redirect(url_for("welcome"))
         lst = res.readResource()

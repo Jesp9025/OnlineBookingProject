@@ -323,8 +323,16 @@ class Booking(Resource):
             return "An error occurred:", e.args[0]
 
 
-    def verifyAvailability(self):
-        return True
+class BookingData(Booking):
+    def createBookingData(self, bookingID, username, resourceID, quantity):
+        try:
+            c = self.conn.cursor()
+            c.execute("INSERT INTO BookingData (bookingdata_id, bookingdata_username, bookingdata_resource_id, bookingdata_resource_quantity, bookingdata_start) VALUES ({}, '{}', {}, {}, '{}')".format(bookingID, username, resourceID, quantity, datetime.date.today()))
+            self.conn.commit()
+            c.close()
+            return True
+        except sqlite3.Error as e:
+            return "An error occurred:", e.args[0]
 
 
 class User(Booking):
