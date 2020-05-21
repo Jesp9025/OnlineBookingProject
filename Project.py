@@ -326,8 +326,10 @@ class Booking(Resource):
 class BookingData(Booking):
     def createBookingData(self, bookingID, username, resourceID, quantity):
         try:
+            now = datetime.datetime.now()
+            t = now.strftime("%H:%M:%S")
             c = self.conn.cursor()
-            c.execute("INSERT INTO BookingData (bookingdata_id, bookingdata_username, bookingdata_resource_id, bookingdata_resource_quantity, bookingdata_start) VALUES ({}, '{}', {}, {}, '{}')".format(bookingID, username, resourceID, quantity, datetime.date.today()))
+            c.execute("INSERT INTO BookingData (bookingdata_booking_id, bookingdata_username, bookingdata_resource_id, bookingdata_resource_quantity, bookingdata_start, bookingdata_time) VALUES ({}, '{}', {}, {}, '{}', '{}')".format(bookingID, username, resourceID, quantity, datetime.date.today(), t))
             self.conn.commit()
             c.close()
             return True
@@ -475,3 +477,20 @@ class User(Booking):
             return True
         except sqlite3.Error as e:
             return "An error occurred:", e.args[0]
+
+
+class UpdateUserData(User):
+    def createUpdateUserData(self, admin, affectedUser, whatChanged):
+        try:
+            now = datetime.datetime.now()
+            t = now.strftime("%H:%M:%S")
+            print(t)
+            c = self.conn.cursor()
+            c.execute("INSERT INTO UpdateUserData (updateuserdata_admin, updateuserdata_affected_user, updateuserdata_what_changed, updateuserdata_date, updateuserdata_time) VALUES ('{}', '{}', '{}', '{}', '{}')".format(admin, affectedUser, whatChanged, datetime.date.today(), t))
+            self.conn.commit()
+            c.close()
+            
+            return True
+        except sqlite3.Error as e:
+            return "An error occurred:", e.args[0]
+            

@@ -14,6 +14,7 @@ res = Project.Resource()
 user = Project.User()
 booking = Project.Booking()
 bookingData = Project.BookingData()
+updateUserData = Project.UpdateUserData()
 
 
 # App config.
@@ -260,13 +261,14 @@ def updateusername():
     lst = user.readUsername()
     try:
         if request.method == 'POST':
-            currentUsername=request.form['name']
-            newUsername=request.form['name2']
+            currentUsername=request.form['Username']
+            newUsername=request.form['Username2']
 
             # Check if current username & new username exists in database
             if user.checkUserExist(currentUsername):
                 if user.checkUserExist(newUsername) == False:
                     user.updateUserAnything("UPDATE User SET user_username = '{}' WHERE user_username = '{}'".format(newUsername, currentUsername))
+                    updateUserData.createUpdateUserData(session['name'], currentUsername, "Changed username to {}".format(newUsername))
                     flash("Success: Username has been updated")
                     return redirect(url_for("welcome"))
                 else:
@@ -289,7 +291,7 @@ def updatepassword():
     lst = user.readUsername()
     try:
         if request.method == 'POST':
-            username=request.form['name']
+            username=request.form['Username']
             password=request.form['password']
             password2=request.form['password2']
 
@@ -297,6 +299,7 @@ def updatepassword():
                 if password == password2:
                     newPassword = generate_password_hash(password)
                     user.updateUserAnything("UPDATE User SET user_password = '{}' WHERE user_username = '{}'".format(newPassword, username))
+                    updateUserData.createUpdateUserData(session['name'], username, "Changed password")
                     flash("Success: User password has been updated")
                     return redirect(url_for("welcome"))
                 else:
@@ -318,11 +321,12 @@ def updateemail():
     lst = user.readUsername()
     try:
         if request.method == 'POST':
-            username=request.form['name']
+            username=request.form['Username']
             email=request.form['email']
 
             if user.checkUserExist(username):
                 user.updateUserAnything("UPDATE User SET user_email = '{}' WHERE user_username = '{}'".format(email, username))
+                updateUserData.createUpdateUserData(session['name'], username, "Changed email to {}".format(email))
                 flash("Success: User Email has been updated")
                 return redirect(url_for("welcome"))
             else:
@@ -342,11 +346,12 @@ def updateadminstatus():
     lst = user.readUserAnything("SELECT user_username, user_is_admin FROM User;")
     try:
         if request.method == 'POST':
-            username=request.form['name']
+            username=request.form['Username']
             admin=request.form['status']
 
             if user.checkUserExist(username):
                 user.updateUserAnything("UPDATE User SET user_is_admin = '{}' WHERE user_username = '{}'".format(admin, username))
+                updateUserData.createUpdateUserData(session['name'], username, "Changed Admin Status to {}".format(admin))
                 flash("Success: User Admin Status has been updated")
                 return redirect(url_for("welcome"))
             else:
@@ -366,10 +371,11 @@ def deleteuser():
     lst = user.readUsername()
     try:
         if request.method == 'POST':
-            username=request.form['name']
+            username=request.form['Username']
 
             if user.checkUserExist(username):
                 user.updateUserAnything("DELETE FROM User WHERE user_username = '{}'".format(username))
+                updateUserData.createUpdateUserData(session['name'], username, "Deleted user")
                 flash("Success: User has been deleted")
                 return redirect(url_for("welcome"))
             else:
@@ -388,11 +394,12 @@ def updateuseractivestatus():
     lst = user.readUserAnything("SELECT user_username, user_account_is_active FROM User;")
     try:
         if request.method == 'POST':
-            username=request.form['name']
+            username=request.form['Username']
             active=request.form['status']
 
             if user.checkUserExist(username):
                 user.updateUserAnything("UPDATE User SET user_account_is_active = '{}' WHERE user_username = '{}'".format(active, username))
+                updateUserData.createUpdateUserData(session['name'], username, "Changed Active Status to {}".format(active))
                 flash("Success: User Active Status has been updated")
                 return redirect(url_for("welcome"))
             else:
