@@ -65,7 +65,7 @@ def login():
 def logout():
     if "name" not in session:
         return redirect(url_for("login"))
-    session.pop("name", None)
+    session.pop("name", None) # This logs you out
     return redirect(url_for("login"))
 
 
@@ -76,7 +76,7 @@ def registration():
         return redirect(url_for("welcome"))
 
     # Prevent spam registration
-    try:
+    try: # Try/Except because session['timereg'] has not yet been set the first time you go to this page
         time = datetime.datetime.utcnow()
         newTime = time - session['timereg']
         if newTime <= datetime.timedelta(seconds=30):
@@ -97,6 +97,7 @@ def registration():
             flash("Error: You must use gmail!")
         else:
             try:
+                # Checks if new username and email is already taken
                 temp = user.readUserAnything("SELECT user_username FROM User")
                 temp = functools.reduce(operator.add, (temp))
                 for item in temp:
@@ -125,7 +126,7 @@ def registration():
 def bugsubmit():
     if "name" not in session:
         return redirect(url_for("login"))
-
+    # Sends bug report as an email to receiver_email in EmailConfirm.py
     if request.method=="POST":
         bug=request.form['bug']
         EmailConfirm.sendEmailBugSubmit(session['name'], bug)
@@ -157,7 +158,8 @@ def reservation():
         return redirect(url_for("login"))
     try:
         booking.deleteOldBookings()
-        # Prevent spam booking
+        # Prevent spam booking. When creating a reservation, UTC time is saved in session/memory,
+        # and next time you enter site, the 2 times are compared and should be more than X seconds before you can enter registration site again
         time = datetime.datetime.utcnow()
         newTime = time - session['time']
         if newTime <= datetime.timedelta(seconds=30):
@@ -183,8 +185,8 @@ def reservation():
             EmailConfirm.sendEmailConfirm(user.readUserEmail(session['name']), bookingID) # Sends an email to users email address
             booking.setUsernameBooking(session['name'], bookingID)
             booking.setQuantityBooking(quantity, bookingID)
-            booking.setResourceIDinBooking(resourceID, bookingID)
-            bookingData.createBookingData(bookingID, session['name'], resourceID, quantity)
+            booking.setResourceIDBooking(resourceID, bookingID)
+            bookingData.createBookingData(bookingID, session['name'], resourceID, quantity) # For logs
             flash("Success: Booking confirmed. An email has been sent to registered email address.")
             return redirect(url_for("welcome"))
         lst = res.readResource()
@@ -333,6 +335,7 @@ def updatepassword():
             password=request.form['password']
             password2=request.form['password2']
 
+            # Checks username in database, and compares the 2 passwords to make sure they match, then hashes it
             if user.checkUserExist(username):
                 if password == password2:
                     newPassword = generate_password_hash(password)

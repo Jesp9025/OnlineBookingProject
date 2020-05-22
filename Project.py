@@ -216,7 +216,7 @@ class Booking(Resource):
             return "An error occurred:", e.args[0]
 
 
-    def setResourceIDinBooking(self, resourceID, bookingID):
+    def setResourceIDBooking(self, resourceID, bookingID):
         '''Updates the booking_resource_id in Booking to whatever is passed as resourceID argument
         '''
         try:
@@ -400,7 +400,7 @@ class User(Booking):
 
     # Gotta convert from tuple to list, from list to str to check password
     def verifyLogin(self, username, password):
-        '''Verifies the login by comparing password from database with input password
+        '''Verifies the login by comparing hashed password from database with input password as hash
         '''
         try:
             c = self.conn.cursor()            
