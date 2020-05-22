@@ -5,6 +5,30 @@
 <link rel="icon" type="image/png" href="../static/favicon.ico">
 <link rel="stylesheet" type="text/css" href="../static/barstyle.css" title="style"/>
 <link rel="stylesheet" type="text/css" href="../static/errorstyle.css" title="style"/>
+
+<style>
+  .alert2 {
+    padding: 20px;
+    background-color: #13a30e;
+    color: white;
+  }
+  
+  .closebtn {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .closebtn:hover {
+    color: black;
+  }
+  </style>
+
 </head>
 <body>
 <div class="navbar">
@@ -47,6 +71,20 @@
     </form>
 </div>
 <p>  </p>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for message in messages %}
+{% if "Success" in message[1]: %}
+<div class="alert2">
+   <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+   <strong>Success!</strong> {{ message[1] | replace("Success:", "")}}
+ </div>
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endwith %}
+
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
 

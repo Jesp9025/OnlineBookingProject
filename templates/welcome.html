@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="../static/theme.css">
 <link rel="icon" type="image/png" href="../static/favicon.ico">
 <link rel="stylesheet" type="text/css" href="../static/barstyle.css" title="style"/>
+<link rel="stylesheet" type="text/css" href="../static/errorstyle.css" title="style"/>
 <style>
    .alert2 {
      padding: 20px;
@@ -53,18 +54,23 @@
 <p>Hover over the "Menu" link to see your options.</p>
 </body>
 <p>  </p>
+
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
-
 {% for message in messages %}
-
-
 {% if "Success" in message[1]: %}
 <div class="alert2">
    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
    <strong>Success!</strong> {{ message[1] | replace("Success:", "")}}
  </div>
 {% endif %}
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for message in messages %}
 {% if "Error" in message[1]: %}
 <div class="alert">
    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 

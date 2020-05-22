@@ -3,6 +3,7 @@ import Project
 import functools, operator # To convert tuple to list
 import EmailConfirm
 from werkzeug.security import generate_password_hash
+import datetime
 
 
 '''Self reflection: May or may not have been easier to use flask-login and similar modules
@@ -70,9 +71,19 @@ def logout():
 
 @app.route("/registration", methods=['GET', 'POST'])
 def registration():
-    if "ip" in session:
-            flash("Error: Must wait before creating more accounts")
+    if "name" in session:
+        flash("Error: You are already logged in.")
+        return redirect(url_for("welcome"))
+
+    # Prevent spam registration
+    try:
+        time = datetime.datetime.utcnow()
+        newTime = time - session['timereg']
+        if newTime <= datetime.timedelta(seconds=30):
+            flash("Error: You must wait before making another account!")
             return redirect(url_for("login"))
+    except KeyError as e:
+        print(e)
 
     if request.method == 'POST':
         userID = user.IDGenerator("user_id", "User")
@@ -81,7 +92,6 @@ def registration():
         password=request.form['password']
         email=request.form['email']
         email=email.lower()
-        ip = request.environ['REMOTE_ADDR']
         
         if "@gmail.com" not in email:
             flash("Error: You must use gmail!")
@@ -101,9 +111,10 @@ def registration():
                     if email == item:
                         flash("Error: Email already taken")
                         return redirect(url_for("registration"))
-                session['ip'] = ip
+
                 user.createUser(userID, username, password, email, False, True)
                 flash("Success: New user created")
+                session['timereg'] = datetime.datetime.utcnow()
                 return redirect(url_for("login"))
             except (ValueError, TypeError) as e:
                 print(e)
@@ -145,13 +156,20 @@ def reservation():
     if "name" not in session:
         return redirect(url_for("login"))
     try:
+        booking.deleteOldBookings()
+        # Prevent spam booking
+        time = datetime.datetime.utcnow()
+        newTime = time - session['time']
+        if newTime <= datetime.timedelta(seconds=30):
+            flash("Error: You must wait before making another reservation!")
+            return redirect(url_for("welcome"))
+
         if request.method == 'POST':
             resourceID=request.form['ID']
             quantity=request.form['quantity']
             bookingID = user.IDGenerator("booking_id", "Booking")
             #date=request.form['date']
 
-            
             try:
                 quantity = int(quantity)
             except (TypeError, ValueError) as e:
@@ -160,7 +178,8 @@ def reservation():
             if booking.createBooking(quantity, resourceID, bookingID): # If resources are not available
                 flash("Error: You can't reserve that many")
                 return redirect(url_for("reservation"))
-                
+            
+            session['time'] = datetime.datetime.utcnow()
             EmailConfirm.sendEmailConfirm(user.readUserEmail(session['name']), bookingID) # Sends an email to users email address
             booking.setUsernameBooking(session['name'], bookingID)
             booking.setQuantityBooking(quantity, bookingID)
@@ -213,7 +232,7 @@ def deleteresource():
                 resourceID=request.form['ID']
                 if res.deleteResource("resource_ID", resourceID): # If resource id exists in database
                     flash("Success: Resource has been deleted")
-                    return redirect(url_for("welcome"))
+                    return redirect(url_for("deleteresource"))
                 else: # If resource doesnt exist in database
                     flash("Error: You can't delete that")
 
@@ -241,7 +260,7 @@ def deletebooking():
             else:
                 booking.deleteOwnBooking("booking_id", bookingID, session['name'])
             flash("Success: Booking has been deleted")
-            return redirect(url_for("welcome"))
+            return redirect(url_for("deletebooking"))
             
         if user.checkIfAdmin(session['name']) == False:
             lst = booking.readSpecificBooking("booking_user_username", session['name'])
@@ -276,7 +295,9 @@ def updateusername():
     try:
         if request.method == 'POST':
             currentUsername=request.form['Username']
+            currentUsername=currentUsername.lower()
             newUsername=request.form['Username2']
+            newUsername=newUsername.lower()
 
             # Check if current username & new username exists in database
             if user.checkUserExist(currentUsername):
@@ -284,7 +305,9 @@ def updateusername():
                     user.updateUserAnything("UPDATE User SET user_username = '{}' WHERE user_username = '{}'".format(newUsername, currentUsername))
                     updateUserData.createUpdateUserData(session['name'], currentUsername, "Changed username to {}".format(newUsername))
                     flash("Success: Username has been updated")
-                    return redirect(url_for("welcome"))
+                    if currentUsername == session['name']:
+                        session['name'] = newUsername
+                    return redirect(url_for("updateuser"))
                 else:
                     flash("Error: New username already exists in database")
             else:
@@ -306,6 +329,7 @@ def updatepassword():
     try:
         if request.method == 'POST':
             username=request.form['Username']
+            username=username.lower()
             password=request.form['password']
             password2=request.form['password2']
 
@@ -315,7 +339,7 @@ def updatepassword():
                     user.updateUserAnything("UPDATE User SET user_password = '{}' WHERE user_username = '{}'".format(newPassword, username))
                     updateUserData.createUpdateUserData(session['name'], username, "Changed password")
                     flash("Success: User password has been updated")
-                    return redirect(url_for("welcome"))
+                    return redirect(url_for("updateuser"))
                 else:
                     flash("Error: Passwords didn't match")
             else:
@@ -336,13 +360,15 @@ def updateemail():
     try:
         if request.method == 'POST':
             username=request.form['Username']
+            username=username.lower()
             email=request.form['email']
+            email=email.lower()
 
             if user.checkUserExist(username):
                 user.updateUserAnything("UPDATE User SET user_email = '{}' WHERE user_username = '{}'".format(email, username))
                 updateUserData.createUpdateUserData(session['name'], username, "Changed email to {}".format(email))
                 flash("Success: User Email has been updated")
-                return redirect(url_for("welcome"))
+                return redirect(url_for("updateuser"))
             else:
                 flash("Error: Couldn't find username in database")
     except (TypeError, ValueError) as e:
@@ -361,13 +387,14 @@ def updateadminstatus():
     try:
         if request.method == 'POST':
             username=request.form['Username']
+            username=username.lower()
             admin=request.form['status']
 
             if user.checkUserExist(username):
                 user.updateUserAnything("UPDATE User SET user_is_admin = '{}' WHERE user_username = '{}'".format(admin, username))
                 updateUserData.createUpdateUserData(session['name'], username, "Changed Admin Status to {}".format(admin))
                 flash("Success: User Admin Status has been updated")
-                return redirect(url_for("welcome"))
+                return redirect(url_for("updateuser"))
             else:
                 flash("Error: Couldn't find username in database")
     except (TypeError, ValueError) as e:
@@ -386,12 +413,16 @@ def deleteuser():
     try:
         if request.method == 'POST':
             username=request.form['Username']
-
+            username=username.lower()
+            if username == session['name']:
+                flash("Error: You can't delete your own user")
+                return redirect(url_for("deleteuser"))
             if user.checkUserExist(username):
                 user.updateUserAnything("DELETE FROM User WHERE user_username = '{}'".format(username))
                 updateUserData.createUpdateUserData(session['name'], username, "Deleted user")
+                booking.deleteBooking("booking_user_username", username) # Delete bookings that the user may have   
                 flash("Success: User has been deleted")
-                return redirect(url_for("welcome"))
+                return redirect(url_for("updateuser"))
             else:
                 flash("Error: Couldn't find username in database")
     except (TypeError, ValueError) as e:
@@ -409,13 +440,14 @@ def updateuseractivestatus():
     try:
         if request.method == 'POST':
             username=request.form['Username']
+            username=username.lower()
             active=request.form['status']
 
             if user.checkUserExist(username):
                 user.updateUserAnything("UPDATE User SET user_account_is_active = '{}' WHERE user_username = '{}'".format(active, username))
                 updateUserData.createUpdateUserData(session['name'], username, "Changed Active Status to {}".format(active))
                 flash("Success: User Active Status has been updated")
-                return redirect(url_for("welcome"))
+                return redirect(url_for("updateuser"))
             else:
                 flash(" Error: Couldn't find username in database")
     except (TypeError, ValueError) as e:

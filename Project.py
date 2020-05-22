@@ -383,6 +383,8 @@ class User(Booking):
             return "An error occurred:", e.args[0]
 
     def verifyUserActiveStatus(self, username):
+        '''Returns True if user is activated, else returns False
+        '''
         try:
             c = self.conn.cursor()
             c.execute("SELECT user_account_is_active FROM User WHERE user_username = '{}'".format(username))
@@ -408,7 +410,7 @@ class User(Booking):
             toString = ""
             for i in toList:
                 toString += str(i)
-            if check_password_hash(toString, password): # Checks if password input matches the hashed password in database
+            if check_password_hash(toString, password): # Checks if password input as hash matches the hashed password in database
                 c.close
                 return True
             else:
@@ -448,6 +450,8 @@ class User(Booking):
     
     
     def readUsername(self):
+        '''Reads all usernames in User table
+        '''
         c = self.conn.cursor()
         c.execute("SELECT user_username FROM User")
         lst = c.fetchall()
@@ -469,7 +473,7 @@ class User(Booking):
 
 
     def readUserAnything(self, param):
-        '''Insert query string
+        '''Insert any query string
         '''
         c = self.conn.cursor()
         c.execute(param)
@@ -479,6 +483,8 @@ class User(Booking):
 
 
     def updateUserAnything(self, param):
+        '''Update anything for User
+        '''
         try:
             c = self.conn.cursor()
             c.execute(param)
@@ -491,6 +497,8 @@ class User(Booking):
 
 class UpdateUserData(User):
     def createUpdateUserData(self, admin, affectedUser, whatChanged):
+        '''Update userdatalog. If admin changes a username, password etc.
+        '''
         try:
             now = datetime.datetime.now()
             t = now.strftime("%H:%M:%S")
@@ -505,6 +513,8 @@ class UpdateUserData(User):
             return "An error occurred:", e.args[0]
             
     def readUserDataLog(self):
+        '''reads everything in UserDataLog. returns as Key:Value
+        '''
         try:
             c = self.conn.cursor()
             c.execute("SELECT 'Admin:', updateuserdata_admin, 'Affected Username:', updateuserdata_affected_user, 'What Changed:', updateuserdata_what_changed, 'Date:', updateuserdata_date, 'Time:', updateuserdata_time FROM UpdateUserData")
