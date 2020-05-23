@@ -164,6 +164,10 @@ def bookings():
     return render_template("bookings.html", data=lst, username=session['name'])
 
 
+#The plan was to be able to book into the future, but we had issues with the way the resource quantity should change.
+#For example if I book ALL resources for 28-05-2020, another person should be able to book it on 26-05-2020.
+#That part is easy, but we couldnt figure out how to make sure that ALL resources would be available for the booking on 28-05-2020.
+#This might require a big change to the base code.
 @app.route("/reservation", methods=['GET', 'POST'])
 def reservation():
     if "name" not in session:
