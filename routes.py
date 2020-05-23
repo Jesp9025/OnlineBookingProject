@@ -231,6 +231,7 @@ def createresource():
             model=request.form['model']
             if res.createResource(quantity, manufactorer, model, resourceID):
                 flash("Success: Resource has been created")
+                lst = res.readResource()
             else:
                 flash("Error: Something went wrong in creating the resource")
     except (ValueError, TypeError, KeyError) as e:
