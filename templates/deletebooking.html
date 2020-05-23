@@ -66,13 +66,13 @@
 </body>
 <p>Logged in as: {{ username }}</p>
 <h1>Delete Booking</h1>
+<p style="color:darkred">If you cant see the booking on this list, you CANT delete it.</p>
     <h2>Bookings</h2>
     <body>
        {%for value in data%}
         <p>{{value | replace("(", "") | replace(")", "") | replace(":", "=") | replace("'", "") | replace("=,", ":")}}</p>
        {%endfor%}
       </body>
-      <!Reference: https://stackoverflow.com/questions/47442632/how-to-write-a-python-for-loop-in-an-html-file/47442724 -->
 <div class="container">
     <form action="" method="post" role="form" autocomplete="off">
     <label for="ID">Booking ID:</label>
