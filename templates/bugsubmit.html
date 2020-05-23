@@ -4,6 +4,17 @@
 <link rel="stylesheet" href="../static/theme.css">
 <link rel="icon" type="image/png" href="../static/favicon.ico">
 <link rel="stylesheet" type="text/css" href="../static/barstyle.css" title="style"/>
+<style>
+.container {
+  width: 500px;
+  clear: both;
+}
+
+.container input {
+  width: 100%;
+  clear: both;
+}
+</style>
 
 </head>
 <body>
@@ -14,6 +25,7 @@
     </button>
     <div class="dropdown-content">
       <a href="logout">Logout</a>
+      <a href="about">About</a>
       <a href="bugsubmit">Submit a bug</a>
       <a href="mainpage">Mainpage</a>
       <a href="welcome">Frontpage</a>
@@ -21,6 +33,7 @@
       <a href="bookings">Bookings</a>
       <a href="reservation">Create Reservation</a>
       <a href="deletebooking">Delete Booking</a>
+      <a href="createresource">Create Resource</a>
       <a href="deleteresource">Delete Resource</a>
       <a href="updateuser">Update User</a>
       <a href="logs">Admin Logs</a>
@@ -29,13 +42,6 @@
 </div>
       <p>Logged in as: {{ username }}</p>
 <h1>Bug Submit</h1>
-<div class="container">
-   <body>
-     {%for value in data%}
-      <p>{{value | replace("(", "") | replace(")", "") | replace(":", "=") | replace("'", "") | replace("=,", ":")}}</p>
-     {%endfor%}
-    </body>
-    <!Reference: https://stackoverflow.com/questions/47442632/how-to-write-a-python-for-loop-in-an-html-file/47442724 -->
 <div class="container">
    <form action="" method="post" role="form">
    <label for="bug">What bug did you find?</label>

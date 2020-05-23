@@ -1,11 +1,70 @@
-<title>About</title>
+<!DOCTYPE html>
+<head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="../static/theme.css">
 <link rel="icon" type="image/png" href="../static/favicon.ico">
 <link rel="stylesheet" type="text/css" href="../static/barstyle.css" title="style"/>
-<form action="/login">
-    <input type="submit" value="Back to Login" />
-</form>
+<link rel="stylesheet" type="text/css" href="../static/errorstyle.css" title="style"/>
+
+<style>
+  .alert2 {
+    padding: 20px;
+    background-color: #13a30e;
+    color: white;
+  }
+
+  .container {
+  width: 250px;
+  clear: both;
+}
+
+.container input {
+  width: 100%;
+  clear: both;
+}
+
+  .closebtn {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .closebtn:hover {
+    color: black;
+  }
+  </style>
+
+</head>
+<body>
+<div class="navbar">
+  <div class="dropdown">
+    <button class="dropbtn">Menu 
+      <i class="fa fa-caret-down"></i>
+    </button>
+    <div class="dropdown-content">
+      <a href="logout">Logout</a>
+      <a href="about">About</a>
+      <a href="bugsubmit">Submit a bug</a>
+      <a href="mainpage">Mainpage</a>
+      <a href="welcome">Frontpage</a>
+      <a href="resources">Resources</a>
+      <a href="bookings">Bookings</a>
+      <a href="reservation">Create Reservation</a>
+      <a href="deletebooking">Delete Booking</a>
+      <a href="createresource">Create Resource</a>
+      <a href="deleteresource">Delete Resource</a>
+      <a href="updateuser">Update User</a>
+      <a href="logs">Admin Logs</a>
+    </div>
+  </div> 
+</div>
+</body>
+<p>Logged in as: {{ username }}</p>
 <h1>OnlineBookingProject</h1>
 <p>Online booking system based on Flask, SQLite and Python</p>
 <p>Made by Jacob, Julius & Jesper at EADania Viborg</p>
@@ -18,13 +77,15 @@
 <p>- Navigation panel on top of website</p>
 <p>- Bookings older than 1 day will be deleted and reserved resource quantity will be put back</p>
 <p>- On booking, an email will be sent to the users registered email address</p>
-<p>- Unique ID generator for user and booking creation</p>
+<p>- Unique ID generator for user,booking and resource creation</p>
 <p>- View Resources & Bookings</p>
 <p>- Make reservation/booking on equipment. Simply input ID of resource and quantity. It will be reserved for 24 hours.</p>
 <p>- Delete bookings (admins can delete everything, users can only delete own bookings)</p>
+<p>- Create Resource</p>
 <p>- Delete Resources(admins only)</p>
 <p>- Update User: Username, password, email, admin status, delete user(admins only)</p>
-
+<p>- Admin Logs. Logs will display if an admin made a change to a user and a list of all bookings made in history</p>
+<p>- Bug submit. Email will be sent to an administrator</p>
 <h2>Limitations:</h2>
 <p>Not possible to book "into the future"</p>
 <p>Meaning, when you create a booking, items/equipment is booked instantly for 1 day</p>

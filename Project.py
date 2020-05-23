@@ -18,13 +18,13 @@ class Resource(object):
         self.conn = sqlite3.connect(self.path, check_same_thread=False)
 
 
-    def createResource(self, resourceQuantity, resourceManufacturer, resourceModel, resourceSerialNumber):
+    def createResource(self, resourceQuantity, resourceManufacturer, resourceModel, resourceID):
         """
         Example: createResource(2, "Lenovo", "DX750", "d231213sddsa")
         """
         try:            
             c = self.conn.cursor()
-            c.execute("INSERT INTO Resource (resource_quantity, resource_manufactorer, resource_model, resource_serial_number) VALUES ({}, '{}', '{}', '{}')".format(resourceQuantity, resourceManufacturer, resourceModel, resourceSerialNumber))
+            c.execute("INSERT INTO Resource (resource_quantity, resource_manufactorer, resource_model, resource_id) VALUES ({}, '{}', '{}', '{}')".format(resourceQuantity, resourceManufacturer, resourceModel, resourceID))
             self.conn.commit()
             c.close()
             return True
@@ -437,7 +437,7 @@ class User(Booking):
         
 
     def IDGenerator(self, column_name, table):
-        '''Generates a unique ID for User and Booking by checking if it already exists in database
+        '''Generates a unique ID for User, Booking and Resource by checking if it already exists in database
         '''
         ID = random.randint(1, 99999)
         c = self.conn.cursor()

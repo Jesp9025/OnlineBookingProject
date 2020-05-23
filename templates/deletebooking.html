@@ -12,7 +12,17 @@
     background-color: #13a30e;
     color: white;
   }
-  
+
+  .container {
+  width: 250px;
+  clear: both;
+}
+
+.container input {
+  width: 100%;
+  clear: both;
+}
+
   .closebtn {
     margin-left: 15px;
     color: white;
@@ -38,6 +48,7 @@
     </button>
     <div class="dropdown-content">
       <a href="logout">Logout</a>
+      <a href="about">About</a>
       <a href="bugsubmit">Submit a bug</a>
       <a href="mainpage">Mainpage</a>
       <a href="welcome">Frontpage</a>
@@ -45,6 +56,7 @@
       <a href="bookings">Bookings</a>
       <a href="reservation">Create Reservation</a>
       <a href="deletebooking">Delete Booking</a>
+      <a href="createresource">Create Resource</a>
       <a href="deleteresource">Delete Resource</a>
       <a href="updateuser">Update User</a>
       <a href="logs">Admin Logs</a>
@@ -54,7 +66,6 @@
 </body>
 <p>Logged in as: {{ username }}</p>
 <h1>Delete Booking</h1>
-<div class="container">
     <h2>Bookings</h2>
     <body>
        {%for value in data%}
@@ -62,7 +73,6 @@
        {%endfor%}
       </body>
       <!Reference: https://stackoverflow.com/questions/47442632/how-to-write-a-python-for-loop-in-an-html-file/47442724 -->
-</div>
 <div class="container">
     <form action="" method="post" role="form">
     <label for="ID">Booking ID:</label>

@@ -158,13 +158,16 @@ def reservation():
         return redirect(url_for("login"))
     try:
         booking.deleteOldBookings()
-        # Prevent spam booking. When creating a reservation, UTC time is saved in session/memory,
-        # and next time you enter site, the 2 times are compared and should be more than X seconds before you can enter registration site again
-        time = datetime.datetime.utcnow()
-        newTime = time - session['time']
-        if newTime <= datetime.timedelta(seconds=30):
-            flash("Error: You must wait before making another reservation!")
-            return redirect(url_for("welcome"))
+        try:
+            # Prevent spam booking. When creating a reservation, UTC time is saved in session/memory,
+            # and next time you enter site, the 2 times are compared and should be more than X seconds before you can enter registration site again
+            time = datetime.datetime.utcnow()
+            newTime = time - session['time']
+            if newTime <= datetime.timedelta(seconds=30):
+                flash("Error: You must wait before making another reservation!")
+                return redirect(url_for("welcome"))
+        except KeyError as e:
+            print(e)
 
         if request.method == 'POST':
             resourceID=request.form['ID']
@@ -196,10 +199,33 @@ def reservation():
         lst = res.readResource()
     return render_template("reservation.html", data=lst, username=session['name'])
 
+@app.route("/createresource", methods=['GET', 'POST'])
+def createresource():
+    if "name" not in session:
+        return redirect(url_for("login"))
+    if user.checkIfAdmin == False:
+        return redirect(url_for("denied"))
+    try:
+        booking.deleteOldBookings()
+        lst = res.readResource()
+        if request.method == 'POST':
+            resourceID=user.IDGenerator("resource_id", "Resource")
+            quantity=request.form['quantity']
+            manufactorer=request.form['manufactorer']
+            model=request.form['model']
+            if res.createResource(quantity, manufactorer, model, resourceID):
+                flash("Success: Resource has been created")
+            else:
+                flash("Error: Something went wrong in creating the resource")
+    except (ValueError, TypeError, KeyError) as e:
+        print(e)
+    return render_template("createresource.html", data=lst, username=session['name'])
 
 @app.route("/about")
 def about():
-    return render_template("about.html")
+    if "name" not in session:
+        return redirect(url_for("login"))
+    return render_template("about.html", username=session['name'])
 
 
 @app.route("/confirm")
