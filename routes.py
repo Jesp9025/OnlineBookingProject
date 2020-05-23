@@ -309,7 +309,10 @@ def deletebooking():
     except TypeError as e:
         flash("Error: You can't delete that")
         print(e.args[0])
-        lst = booking.readBooking()
+        if user.checkIfAdmin(session['name']) == False:
+            lst = booking.readSpecificBooking("booking_user_username", session['name'])
+        else:
+            lst = booking.readBooking()
     
     return render_template("deletebooking.html", data=lst, username=session['name'])
 
