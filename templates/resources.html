@@ -13,10 +13,8 @@
     </button>
     <div class="dropdown-content">
       <a href="logout">Logout</a>
-      <a href="about">About</a>
       <a href="bugsubmit">Submit a bug</a>
       <a href="mainpage">Mainpage</a>
-      <a href="welcome">Frontpage</a>
       <a href="resources">Resources</a>
       <a href="bookings">Bookings</a>
       <a href="reservation">Create Reservation</a>
@@ -27,14 +25,26 @@
       <a href="logs">Admin Logs</a>
     </div>
   </div> 
+  <a href="welcome">Frontpage</a>
+  <a href="about">About</a>
 </div>
 </body>
 <p>Logged in as: {{ username }}</p>
-<div class="container">
 <h2>Resources</h2>
 <body>
   {%for value in data%}
    <p>{{value | replace("(", "") | replace(")", "") | replace(":", "=") | replace("'", "") | replace("=,", ":")}}</p>
   {%endfor%}
  </body>
- <!Reference: https://stackoverflow.com/questions/47442632/how-to-write-a-python-for-loop-in-an-html-file/47442724 -->
+<div class="container">
+  <form action="" method="post" role="form" autocomplete="off">
+    <label for="search">Search:</label>
+    <input type="search" class="form-control" id="search" name="search" required>
+    <button type="submit" class="btn btn-success">Search</button>
+    <a href="resources">Show all</a>
+    </form>
+    <p>Default search is exact</p>
+    <p>Search is cAsE sEnSiTiVe</p>
+      <p>Put % before and after search criteria to search for anything that contains what you are looking for</p>
+      <p>For example %Cis%</p>
+</div>

@@ -25,10 +25,8 @@
     </button>
     <div class="dropdown-content">
       <a href="logout">Logout</a>
-      <a href="about">About</a>
       <a href="bugsubmit">Submit a bug</a>
       <a href="mainpage">Mainpage</a>
-      <a href="welcome">Frontpage</a>
       <a href="resources">Resources</a>
       <a href="bookings">Bookings</a>
       <a href="reservation">Create Reservation</a>
@@ -39,11 +37,13 @@
       <a href="logs">Admin Logs</a>
     </div>
   </div> 
+  <a href="welcome">Frontpage</a>
+  <a href="about">About</a>
 </div>
       <p>Logged in as: {{ username }}</p>
 <h1>Bug Submit</h1>
 <div class="container">
-   <form action="" method="post" role="form">
+   <form action="" method="post" role="form"autocomplete="off">
    <label for="bug">What bug did you find?</label>
    <input type="text" class="form-control" id="bug" name="bug" required>
    <button type="submit" class="btn btn-success">Submit bug</button>

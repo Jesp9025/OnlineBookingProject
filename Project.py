@@ -31,6 +31,12 @@ class Resource(object):
         except sqlite3.Error as e:
             return "An error occurred:", e.args[0]
 
+    def readResourceSearch(self, userinput):
+        c = self.conn.cursor()
+        c.execute("SELECT 'Resource ID:', resource_id, 'Quantity:', resource_quantity, 'Manufactorer:', resource_manufactorer, 'Model:', resource_model FROM Resource WHERE resource_id LIKE '{}' OR resource_quantity LIKE '{}' OR resource_manufactorer LIKE '{}' OR resource_model LIKE '{}'".format(userinput, userinput, userinput, userinput))
+        lst = c.fetchall()
+        c.close()
+        return lst
 
     def readResource(self):
         """Reads everything in Resource table
@@ -122,6 +128,12 @@ class Booking(Resource):
         c.close()
         return lst
 
+    def readBookingSearch(self, userinput):
+        c = self.conn.cursor()
+        c.execute("SELECT 'Booking ID:', booking_id, 'User:', booking_user_username, 'Booking Date:', booking_start, 'Resource ID:', booking_resource_id, 'Quantity:', booking_resource_quantity FROM Booking WHERE booking_id LIKE '{}' OR booking_user_username LIKE '{}' OR booking_start LIKE '{}' OR booking_resource_id LIKE '{}' OR booking_resource_quantity LIKE '{}'".format(userinput, userinput, userinput, userinput, userinput))
+        lst = c.fetchall()
+        c.close()
+        return lst
 
     def readSpecificBooking(self, column_name, value):
         c = self.conn.cursor()

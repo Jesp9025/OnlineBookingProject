@@ -134,21 +134,33 @@ def bugsubmit():
         return redirect(url_for("welcome"))
 
     return render_template("bugsubmit.html", username=session['name'])
-@app.route("/resources")
+@app.route("/resources", methods=['GET', 'POST'])
 def resources():
     if "name" not in session:
         return redirect(url_for("login"))
+        
     booking.deleteOldBookings()
     lst = res.readResource()
+
+    if request.method == 'POST':
+        search=request.form['search']
+        lst = res.readResourceSearch(search)
+        return render_template("resources.html", data=lst, username=session['name'])
     return render_template("resources.html", data=lst, username=session['name'])
 
 
-@app.route("/bookings")
+@app.route("/bookings", methods=['GET', 'POST'])
 def bookings():
     if "name" not in session:
         return redirect(url_for("login"))
+        
     booking.deleteOldBookings()
     lst = booking.readBooking()
+
+    if request.method == 'POST':
+        search=request.form['search']
+        lst = booking.readBookingSearch(search)
+        return render_template("bookings.html", data=lst, username=session['name'])
     return render_template("bookings.html", data=lst, username=session['name'])
 
 
