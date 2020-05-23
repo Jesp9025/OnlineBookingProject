@@ -215,7 +215,7 @@ def reservation():
 def createresource():
     if "name" not in session:
         return redirect(url_for("login"))
-    if user.checkIfAdmin == False:
+    if user.checkIfAdmin(session['name']) == False:
         return redirect(url_for("denied"))
     try:
         booking.deleteOldBookings()
