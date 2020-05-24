@@ -480,6 +480,7 @@ def deleteuser():
             else:
                 flash("Error: Couldn't find username in database")
     except (TypeError, ValueError) as e:
+        print(e)
         flash("Error: Something went wrong.")
         return redirect(url_for("updateuser"))
     return render_template("deleteuser.html", data=lst, username=session['name'])
