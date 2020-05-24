@@ -275,7 +275,7 @@ class Booking(Resource):
             c.close()
             return True
 
-        except sqlite3.Error as e:
+        except (sqlite3.Error, TypeError) as e: # TypeError happens if user doesnt have any bookings
             return "An error occurred:", e.args[0]
 
 
@@ -444,22 +444,25 @@ class User(Booking):
                 getInt += item
             newID = getInt + 1
             c.close()
-            print("HERE")
             return newID
+
         except TypeError as e:
             print(e.args[0])
             # In case there are no bookings in Booking table: make sure booking_id doesnt overlap with id from bookingdata table
             if "booking_id" in column_name:
-                c.execute("SELECT bookingdata_booking_id FROM BookingData ORDER BY bookingdata_booking_id DESC LIMIT 1")
-                lst = c.fetchall()
-                to_List = functools.reduce(operator.add, (lst))
-                tempInt = 0
-                for item in to_List:
-                    tempInt += item
-                ID = tempInt + 1
-                c.close()
-                print("NO HERE")
-                return ID
+                try:
+                    c.execute("SELECT bookingdata_booking_id FROM BookingData ORDER BY bookingdata_booking_id DESC LIMIT 1")
+                    lst = c.fetchall()
+                    to_List = functools.reduce(operator.add, (lst))
+                    tempInt = 0
+                    for item in to_List:
+                        tempInt += item
+                    ID = tempInt + 1
+                    c.close()
+                    return ID
+                except (TypeError, KeyError, NameError, RuntimeError, sqlite3.Error) as e: # In case something goes wrong
+                    print(e)
+                    return 1
             else:
                 return 1
 

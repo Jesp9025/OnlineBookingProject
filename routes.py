@@ -474,13 +474,14 @@ def deleteuser():
             if user.checkUserExist(username):
                 user.updateUserAnything("DELETE FROM User WHERE user_username = '{}'".format(username))
                 updateUserData.createUpdateUserData(session['name'], username, "Deleted user")
-                booking.deleteBooking("booking_user_username", username) # Delete bookings that the user may have   
+                booking.deleteBooking("booking_user_username", username) # Delete bookings that the user may have  
                 flash("Success: User has been deleted")
                 return redirect(url_for("updateuser"))
             else:
                 flash("Error: Couldn't find username in database")
     except (TypeError, ValueError) as e:
-        return e
+        flash("Error: Something went wrong.")
+        return redirect(url_for("updateuser"))
     return render_template("deleteuser.html", data=lst, username=session['name'])
 
 @app.route("/updateuseractivestatus", methods=['GET', 'POST'])
