@@ -432,6 +432,8 @@ class User(Booking):
             pass
     
     def IDGenerator(self, column_name, table):
+        '''Generates a unique ID for User, Booking and Resource by checking last item in column + 1
+        '''
         try:
             c = self.conn.cursor()
             c.execute("SELECT {} FROM {} ORDER BY {} DESC LIMIT 1;".format(column_name, table, column_name))
