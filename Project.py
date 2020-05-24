@@ -448,7 +448,7 @@ class User(Booking):
             return newID
         except TypeError as e:
             print(e.args[0])
-            # To make sure we dont overlap with a booking id from bookingdata log, to keep it unique
+            # In case there are no bookings in Booking table: make sure booking_id doesnt overlap with id from bookingdata table
             if "booking_id" in column_name:
                 c.execute("SELECT bookingdata_booking_id FROM BookingData ORDER BY bookingdata_booking_id DESC LIMIT 1")
                 lst = c.fetchall()
