@@ -7,10 +7,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class Resource(object):
-    resourceQuantity = int
-    resourceManufactorer = str
-    resourceModel = str
-    resourceSerialNumber = str
     def __init__(self):        
         self.databaseFile = "databaseProject.db"
         self.databaseLocation = os.path.abspath(os.path.dirname(__file__))
@@ -83,11 +79,6 @@ class Resource(object):
 
 
 class Booking(Resource):
-    bookingID = int
-    bookingStart = datetime
-    isBooked = bool
-
-
     def createBooking(self, quantity, resourceID, bookingID):
         '''Creates a new booking. Checks if enough equipment is available
         '''
@@ -360,14 +351,6 @@ class BookingData(Booking):
 
 
 class User(Booking):
-    userID = int
-    __username = str
-    __password = str
-    __email = str
-    userisAdmin = bool
-    accountIsActive = bool
-
-
     def readUserEmail(self, username):
         '''Reads users email address and returns it
         '''
@@ -393,6 +376,7 @@ class User(Booking):
             return "Succesfully created new user"
         except sqlite3.Error as e:
             return "An error occurred:", e.args[0]
+
 
     def verifyUserActiveStatus(self, username):
         '''Returns True if user is activated, else returns False
