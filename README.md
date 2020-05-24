@@ -2,7 +2,9 @@
 <p>Online booking system based on HTML, Flask, SQLite and Python</p>
 <p>Made by Jacob, Julius & Jesper at EADania Viborg</p>
 
+<h2>Class Diagram</h2>
 
+![Class Diagram](C:\Users\Julo\Desktop\Class diagram - Booking system.png)
 <h2>Features:</h2>
 <p>- Create/Register new account. Has 30 seconds cooldown</p>
 <p>- Login page with session</p>
