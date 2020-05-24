@@ -9,7 +9,6 @@ import datetime
 '''Self reflection: May or may not have been easier to use flask-login and similar modules
 '''
 
-
 # To get methods from classes
 res = Project.Resource()
 user = Project.User()
