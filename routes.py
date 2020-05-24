@@ -189,8 +189,9 @@ def reservation():
             resourceID=request.form['ID']
             quantity=request.form['quantity']
             bookingID = user.IDGenerator("booking_id", "Booking")
+            email=request.form['status']
             #date=request.form['date']
-
+            
             try:
                 quantity = int(quantity)
             except (TypeError, ValueError) as e:
@@ -201,12 +202,17 @@ def reservation():
                 return redirect(url_for("reservation"))
             
             session['time'] = datetime.datetime.utcnow()
-            EmailConfirm.sendEmailConfirm(user.readUserEmail(session['name']), bookingID) # Sends an email to users email address
+            try:
+                if email == "True":
+                    EmailConfirm.sendEmailConfirm(user.readUserEmail(session['name']), bookingID) # Sends an email to users email address
+            except:
+                flash("Couldnt send email.")
+
             booking.setUsernameBooking(session['name'], bookingID)
             booking.setQuantityBooking(quantity, bookingID)
             booking.setResourceIDBooking(resourceID, bookingID)
             bookingData.createBookingData(bookingID, session['name'], resourceID, quantity) # For logs
-            flash("Success: Booking confirmed. An email has been sent to registered email address.")
+            flash("Success: Booking confirmed.")
             return redirect(url_for("welcome"))
         lst = res.readResource()
     except TypeError as e:
