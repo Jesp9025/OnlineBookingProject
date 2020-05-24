@@ -126,7 +126,7 @@ def registration():
 def bugsubmit():
     if "name" not in session:
         return redirect(url_for("login"))
-    # Sends bug report as an email to receiver_email in EmailConfirm.py
+
     if request.method=="POST":
         bug=request.form['bug']
         EmailConfirm.sendEmailBugSubmit(session['name'], bug)

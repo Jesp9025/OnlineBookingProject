@@ -430,19 +430,37 @@ class User(Booking):
             return False
         except TypeError:
             pass
+    
+    def IDGenerator(self, column_name, table):
+        try:
+            c = self.conn.cursor()
+            c.execute("SELECT {} FROM {} ORDER BY {} DESC LIMIT 1;".format(column_name, table, column_name))
+            lst = c.fetchall()
+            toList = functools.reduce(operator.add, (lst))
+            getInt = 0
+            for item in toList:
+                getInt += item
+            print(getInt)
+            newID = getInt + 1
+            print(newID)
+            return newID
+        except TypeError as e:
+            print(e.args[0])
+            return 1
         
 
-    def IDGenerator(self, column_name, table):
-        '''Generates a unique ID for User, Booking and Resource by checking if it already exists in database
-        '''
-        ID = random.randint(1, 99999)
-        c = self.conn.cursor()
-        c.execute("SELECT {} FROM {} WHERE {} = {}".format(column_name, table, ID, column_name))
-        lst = c.fetchall()
-        for item in lst:
-            if item == ID:
-                ID = random.randint(1, 99999)
-        return ID
+#    def IDGenerator(self, column_name, table):
+#        '''Generates a unique ID for User, Booking and Resource by checking if it already exists in database
+#        '''
+#        ID = random.randint(1, 99999)
+#        c = self.conn.cursor()
+#        c.execute("SELECT {} FROM {} WHERE {} = {}".format(column_name, table, ID, column_name))
+#        lst = c.fetchall()
+#        for item in lst:
+#            if item == ID:
+#                ID = random.randint(1, 99999)
+#        c.close()
+#        return ID
     
     
     def readUsername(self):
