@@ -436,20 +436,32 @@ class User(Booking):
         '''
         try:
             c = self.conn.cursor()
-            c.execute("SELECT {} FROM {} ORDER BY {} DESC LIMIT 1;".format(column_name, table, column_name))
+            c.execute("SELECT {} FROM {} ORDER BY {} DESC LIMIT 1".format(column_name, table, column_name))
             lst = c.fetchall()
             toList = functools.reduce(operator.add, (lst))
             getInt = 0
             for item in toList:
                 getInt += item
-            print(getInt)
             newID = getInt + 1
-            print(newID)
+            c.close()
+            print("HERE")
             return newID
         except TypeError as e:
             print(e.args[0])
-            return 1
-
+            # To make sure we dont overlap with a booking id from bookingdata log, to keep it unique
+            if "booking_id" in column_name:
+                c.execute("SELECT bookingdata_booking_id FROM BookingData ORDER BY bookingdata_booking_id DESC LIMIT 1")
+                lst = c.fetchall()
+                to_List = functools.reduce(operator.add, (lst))
+                tempInt = 0
+                for item in to_List:
+                    tempInt += item
+                ID = tempInt + 1
+                c.close()
+                print("NO HERE")
+                return ID
+            else:
+                return 1
 
     def readUsername(self):
         '''Reads all usernames in User table
