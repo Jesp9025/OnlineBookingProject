@@ -1,5 +1,5 @@
 <h1>OnlineBookingProject</h1>
-<p>Online booking system based on Flask, SQLite and Python</p>
+<p>Online booking system based on HTML, Flask, SQLite and Python</p>
 <p>Made by Jacob, Julius & Jesper at EADania Viborg</p>
 
 
