@@ -22,6 +22,7 @@ DEBUG = False
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.config['SECRET_KEY'] = '7d441f27d441f275asdasd6352567d441f2b6176a'
+attempt = 0
 
 
 @app.route("/")
@@ -41,23 +42,54 @@ def authors():
 
 @app.route("/login", methods=['GET', 'POST'])
 def login():
+    global attempt
+
     if request.method == 'POST':
+        try:
+            if session['attempt'] >= 3:
+                time = datetime.datetime.utcnow()
+                newTime = time - session['timeban']
+                if newTime <= datetime.timedelta(seconds=30):
+                    flash("Error: You must wait {} seconds before attempting to log in again".format(datetime.timedelta(seconds=30) - newTime))
+                    return redirect(url_for("login"))
+                else:
+                    session['attempt'] = 0
+                    attempt = 0
+                    print(session['attempt'])
+        except KeyError:
+            print("Timeban and attempt session not yet set. Will after first login attempt")
+
+
         name=request.form['Username']
         name=name.lower()
         password=request.form['password']
-        
+            
         if user.verifyLogin(name, password):
             if user.verifyUserActiveStatus(name) == False:
                 flash("Error: Your account has been deactivated by an admin")
             else:
                 session['name'] = name
+                session['attempt'] = 0
+                attempt = 0
                 return redirect(url_for("welcome"))
         else:
-            flash('Error: Wrong username or password')
+            attempt += 1
+            session['attempt'] = attempt
+            print(session['attempt'])
+            session['timeban'] = datetime.datetime.utcnow()
+
+            if session['attempt'] >= 3:
+                time = datetime.datetime.utcnow()
+                newTime = time - session['timeban']
+                flash("Error: You must wait {} seconds before attempting to log in again".format(datetime.timedelta(seconds=30)))
+            else:
+                flash('Error: Wrong username or password')
+
     if "name" in session:
         return redirect(url_for("welcome"))
     else:
         return render_template('login.html')
+    
 
 
 @app.route("/logout")
