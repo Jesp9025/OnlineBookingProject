@@ -46,7 +46,7 @@ def login():
 
     if request.method == 'POST':
         try:
-            if session['attempt'] >= 3:
+            if attempt >= 3:
                 time = datetime.datetime.utcnow()
                 newTime = time - session['timeban']
                 if newTime <= datetime.timedelta(seconds=30):
@@ -55,7 +55,7 @@ def login():
                 else:
                     session['attempt'] = 0
                     attempt = 0
-                    print(session['attempt'])
+                    print(attempt)
         except KeyError:
             print("Timeban and attempt session not yet set. Will after first login attempt")
 
@@ -69,13 +69,11 @@ def login():
                 flash("Error: Your account has been deactivated by an admin")
             else:
                 session['name'] = name
-                session['attempt'] = 0
                 attempt = 0
                 return redirect(url_for("welcome"))
         else:
             attempt += 1
-            session['attempt'] = attempt
-            print(session['attempt'])
+            print(attempt)
             session['timeban'] = datetime.datetime.utcnow()
 
             if session['attempt'] >= 3:
