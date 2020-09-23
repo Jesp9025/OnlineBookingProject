@@ -23,7 +23,7 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 app.config['SECRET_KEY'] = '7d441f27d441f275asdasd6352567d441f2b6176a'
 attempt = 0
-
+timeban = datetime.datetime.utcnow()
 
 @app.route("/")
 def index():
@@ -43,22 +43,18 @@ def authors():
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     global attempt
+    global timeban
 
     if request.method == 'POST':
-        try:
-            if attempt >= 3:
-                time = datetime.datetime.utcnow()
-                newTime = time - session['timeban']
-                if newTime <= datetime.timedelta(seconds=30):
-                    flash("Error: You must wait {} seconds before attempting to log in again".format(datetime.timedelta(seconds=30) - newTime))
-                    return redirect(url_for("login"))
-                else:
-                    session['attempt'] = 0
-                    attempt = 0
-                    print(attempt)
-        except KeyError:
-            print("Timeban and attempt session not yet set. Will after first login attempt")
-
+        if attempt >= 3:
+            time = datetime.datetime.utcnow()
+            newTime = time - timeban
+            if newTime <= datetime.timedelta(seconds=30):
+                flash("Error: You must wait {} seconds before attempting to log in again".format(datetime.timedelta(seconds=30) - newTime))
+                return redirect(url_for("login"))
+            else:
+                attempt = 0
+                print(attempt)
 
         name=request.form['Username']
         name=name.lower()
@@ -74,11 +70,11 @@ def login():
         else:
             attempt += 1
             print(attempt)
-            session['timeban'] = datetime.datetime.utcnow()
+            timeban = datetime.datetime.utcnow()
 
-            if session['attempt'] >= 3:
+            if attempt >= 3:
                 time = datetime.datetime.utcnow()
-                newTime = time - session['timeban']
+                newTime = time - timeban
                 flash("Error: You must wait {} seconds before attempting to log in again".format(datetime.timedelta(seconds=30)))
             else:
                 flash('Error: Wrong username or password')
@@ -109,7 +105,7 @@ def registration():
         time = datetime.datetime.utcnow()
         newTime = time - session['timereg']
         if newTime <= datetime.timedelta(seconds=30):
-            flash("Error: You must wait before making another account!")
+            flash("Error: You must wait {} seconds before making another account!".format(datetime.timedelta(seconds=30)-newTime))
             return redirect(url_for("login"))
     except KeyError as e:
         print(e)
@@ -209,7 +205,7 @@ def reservation():
             time = datetime.datetime.utcnow()
             newTime = time - session['time']
             if newTime <= datetime.timedelta(seconds=30):
-                flash("Error: You must wait before making another reservation!")
+                flash("Error: You must wait {} seconds before making another reservation!".format(datetime.timedelta(seconds=30)-newTime))
                 return redirect(url_for("welcome"))
         except KeyError as e:
             print(e)
