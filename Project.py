@@ -411,8 +411,9 @@ class User(Booking):
                 return True
             else:
                 print("Wrong username and password combination")
-        except TypeError:
-            print("Something went wrong")
+        except TypeError as e:
+            print(e.args[0])
+            print("!! This error happens if username is not found on verifyLogin !!")
 
 
     def checkIfAdmin(self, username):
